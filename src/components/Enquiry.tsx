@@ -34,31 +34,44 @@ export function Enquiry() {
     return () => clearTimeout(t);
   }, [status]);
 
+  const [errorDetail, setErrorDetail] = useState("");
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!formspreeId) {
-      setStatus("error");
-      return;
-    }
-
     setStatus("submitting");
+    setErrorDetail("");
     const form = e.currentTarget;
-    const data = new FormData(form);
+
+    const els = form.elements;
+    const payload: Record<string, string> = {
+      name:    (els.namedItem("name")    as HTMLInputElement).value,
+      email:   (els.namedItem("email")   as HTMLInputElement).value,
+      phone:   (els.namedItem("phone")   as HTMLInputElement).value,
+      message: (els.namedItem("message") as HTMLTextAreaElement).value,
+    };
+    const gotcha = (els.namedItem("_gotcha") as HTMLInputElement)?.value;
+    if (gotcha) payload._gotcha = gotcha;
 
     try {
       const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         setStatus("success");
         form.reset();
       } else {
+        const body = await res.json().catch(() => null);
+        const detail = body?.error ?? body?.errors?.[0]?.message ?? `Status ${res.status}`;
+        console.error("Formspree error:", res.status, body);
+        setErrorDetail(detail);
         setStatus("error");
       }
-    } catch {
+    } catch (err) {
+      console.error("Formspree fetch failed:", err);
+      setErrorDetail(err instanceof Error ? err.message : String(err));
       setStatus("error");
     }
   }
@@ -193,6 +206,9 @@ export function Enquiry() {
               {status === "error" && (
                 <p className="text-center text-sm text-burgundy">
                   Something went wrong. Please try again or contact us directly.
+                  {errorDetail && (
+                    <span className="mt-1 block text-xs opacity-60">{errorDetail}</span>
+                  )}
                 </p>
               )}
 
