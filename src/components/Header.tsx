@@ -13,7 +13,7 @@ interface SearchResult {
 }
 
 export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean }) {
-  const { atTop, showBg } = useHeaderState();
+  const { atTop } = useHeaderState();
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

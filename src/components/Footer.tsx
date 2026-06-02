@@ -18,6 +18,12 @@ export function Footer() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs tracking-[0.1em] text-muted uppercase">
+          <Link href="/our-mission" className="link-underline hover:text-burgundy">
+            Our Philosophy
+          </Link>
+          <Link href="/testimonials" className="link-underline hover:text-burgundy">
+            Testimonials
+          </Link>
           <Link href="/about" className="link-underline hover:text-burgundy">
             About Arun
           </Link>

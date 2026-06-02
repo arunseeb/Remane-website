@@ -59,11 +59,11 @@ export function Manifesto() {
             ].map((item, i) => (
               <Fragment key={item.step}>
                 {i > 0 && (
-                  <div key={`sep-${i}`} className="hidden md:flex md:items-center md:self-center md:px-1 md:pb-10">
+                  <FadeIn from="left" delay={i * 0.18 - 0.09} className="hidden md:flex md:items-center md:self-center md:px-1 md:pb-10">
                     <span className="font-display text-3xl tracking-[0.5em] text-gold/40">– – –</span>
-                  </div>
+                  </FadeIn>
                 )}
-              <FadeIn delay={i * 0.12} className="md:flex-1">
+              <FadeIn from="left" delay={i * 0.18} className="md:flex-1">
                 <div className="flex flex-col items-center text-center md:px-8">
                   <p className="font-display text-5xl text-gold/30">{item.step}</p>
                   <h3 className="mt-4 font-display text-2xl text-foreground">{item.title}</h3>

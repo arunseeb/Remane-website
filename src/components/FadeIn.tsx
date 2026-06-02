@@ -7,9 +7,10 @@ type FadeInProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
+  from?: "left";
 };
 
-export function FadeIn({ children, className, delay = 0 }: FadeInProps) {
+export function FadeIn({ children, className, delay = 0, from }: FadeInProps) {
   const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {
@@ -19,8 +20,8 @@ export function FadeIn({ children, className, delay = 0 }: FadeInProps) {
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: from === "left" ? -20 : 0, y: from === "left" ? 0 : 12 }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{
         duration: 1,

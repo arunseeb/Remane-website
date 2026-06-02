@@ -67,6 +67,19 @@ export function VisualStack() {
         <p className="mt-6 text-base md:text-lg text-white/75 max-w-xl tracking-wide leading-relaxed">
           A structured system helping successful men rebuild their confidence, identity, relationships, and future after divorce.
         </p>
+        <a
+          href="#enquire"
+          className="mt-10 text-xs tracking-[0.25em] text-white/80 uppercase border-b border-white/30 pb-0.5 transition-opacity hover:opacity-60"
+        >
+          Begin your enquiry →
+        </a>
+      </div>
+
+      {/* Scroll cue */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-bounce opacity-30" aria-hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
 
       {/* Slide indicators */}

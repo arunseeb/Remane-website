@@ -84,6 +84,9 @@ export function Enquiry() {
           <p className="mt-6 text-center text-sm leading-relaxed text-muted">
             Entirely private. Each enquiry is considered personally. You will hear back within 24 hours.
           </p>
+          <p className="mt-3 text-center text-xs tracking-[0.15em] text-muted/60 uppercase">
+            An investment of £1,000 / month
+          </p>
         </FadeIn>
 
         <FadeIn delay={0.12}>

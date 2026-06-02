@@ -42,10 +42,6 @@ export const metadata: Metadata = {
     description: "A bespoke path from recovery to mastery.",
     images: ["/brand/logo-red.png"],
   },
-  icons: {
-    icon: "/brand/logo-red.png",
-    apple: "/brand/logo-red.png",
-  },
 };
 
 export default function RootLayout({
