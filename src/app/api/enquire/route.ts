@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID ?? "xlgvydll";
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const ENQUIRY_TO = process.env.ENQUIRY_TO_EMAIL;
 
 export async function POST(req: NextRequest) {
+  if (!RESEND_API_KEY || !ENQUIRY_TO) {
+    console.error("Missing RESEND_API_KEY or ENQUIRY_TO_EMAIL env var");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
   let body: Record<string, string>;
   try {
     body = await req.json();
@@ -15,30 +21,36 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const formData = new FormData();
-    formData.append("name", body.name);
-    formData.append("email", body.email);
-    formData.append("phone", body.phone ?? "");
-    formData.append("message", body.message);
-
-    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Accept: "application/json" },
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "Remane <onboarding@resend.dev>",
+        to: [ENQUIRY_TO],
+        reply_to: body.email,
+        subject: `New enquiry from ${body.name}`,
+        html: `
+          <p><strong>Name:</strong> ${body.name}</p>
+          <p><strong>Email:</strong> ${body.email}</p>
+          <p><strong>Phone:</strong> ${body.phone || "—"}</p>
+          <p><strong>Message:</strong></p>
+          <p>${body.message.replace(/\n/g, "<br>")}</p>
+        `,
+      }),
     });
 
-    const text = await res.text();
-    console.log("Formspree response:", res.status, text.slice(0, 300));
+    const data = await res.json().catch(() => ({})) as { id?: string; statusCode?: number; message?: string };
 
     if (res.ok) return NextResponse.json({ ok: true });
 
-    let data: { error?: string; errors?: { message: string }[] } = {};
-    try { data = JSON.parse(text); } catch { /* non-JSON response */ }
-
-    const error = data.error ?? data.errors?.[0]?.message ?? `Formspree ${res.status}: ${text.slice(0, 100)}`;
+    const error = data.message ?? `Email error ${res.status}`;
+    console.error("Resend error:", res.status, data);
     return NextResponse.json({ error }, { status: res.status });
   } catch (err) {
-    console.error("Enquiry proxy error:", err);
+    console.error("Resend fetch error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
