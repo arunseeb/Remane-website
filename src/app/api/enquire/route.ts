@@ -15,17 +15,27 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const formData = new FormData();
+    formData.append("name", body.name);
+    formData.append("email", body.email);
+    formData.append("phone", body.phone ?? "");
+    formData.append("message", body.message);
+
     const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(body),
+      headers: { Accept: "application/json" },
+      body: formData,
     });
 
-    const data = await res.json().catch(() => ({})) as { error?: string; errors?: { message: string }[] };
+    const text = await res.text();
+    console.log("Formspree response:", res.status, text.slice(0, 300));
 
     if (res.ok) return NextResponse.json({ ok: true });
 
-    const error = data.error ?? data.errors?.[0]?.message ?? `Formspree error ${res.status}`;
+    let data: { error?: string; errors?: { message: string }[] } = {};
+    try { data = JSON.parse(text); } catch { /* non-JSON response */ }
+
+    const error = data.error ?? data.errors?.[0]?.message ?? `Formspree ${res.status}: ${text.slice(0, 100)}`;
     return NextResponse.json({ error }, { status: res.status });
   } catch (err) {
     console.error("Enquiry proxy error:", err);
