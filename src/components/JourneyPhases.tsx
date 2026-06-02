@@ -13,23 +13,27 @@ export function JourneyPhases() {
     const track = trackRef.current;
     if (!track) return;
     const panels = track.querySelectorAll<HTMLElement>("[data-phase-panel]");
-    panels[index]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const panel = panels[index];
+    if (!panel) return;
+    const trackRect = track.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const offset = panelRect.left - trackRect.left - (track.clientWidth - panel.offsetWidth) / 2;
+    track.scrollTo({ left: track.scrollLeft + offset, behavior: "smooth" });
   }, []);
 
   const updateActiveIndex = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
-
     const panels = track.querySelectorAll<HTMLElement>("[data-phase-panel]");
     if (!panels.length) return;
 
-    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    const trackCenter = track.getBoundingClientRect().left + track.clientWidth / 2;
     let closest = 0;
     let minDistance = Infinity;
 
     panels.forEach((panel, index) => {
-      const panelCenter = panel.offsetLeft + panel.offsetWidth / 2;
-      const distance = Math.abs(trackCenter - panelCenter);
+      const rect = panel.getBoundingClientRect();
+      const distance = Math.abs(rect.left + rect.width / 2 - trackCenter);
       if (distance < minDistance) {
         minDistance = distance;
         closest = index;
@@ -107,17 +111,19 @@ export function JourneyPhases() {
             ))}
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-5 md:justify-start">
+          <div className="mt-8 flex items-center justify-center gap-6 md:justify-start">
             <button
               onClick={() => scrollToPanel(activeIndex - 1)}
               disabled={activeIndex === 0}
               aria-label="Previous phase"
-              className="text-burgundy transition-opacity hover:opacity-70 disabled:opacity-20"
+              className="flex h-11 w-11 items-center justify-center border border-brown/30 text-burgundy transition-all duration-300 hover:border-burgundy disabled:cursor-not-allowed disabled:opacity-20"
             >
-              ←
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {PHASES.map((phase, index) => (
                 <button
                   key={phase.title}
@@ -126,7 +132,7 @@ export function JourneyPhases() {
                   className={`h-px transition-all duration-500 ${
                     index === activeIndex
                       ? "w-10 bg-burgundy"
-                      : "w-6 bg-brown/30 hover:bg-brown/60"
+                      : "w-6 bg-brown/30 hover:bg-brown/50"
                   }`}
                 />
               ))}
@@ -136,9 +142,11 @@ export function JourneyPhases() {
               onClick={() => scrollToPanel(activeIndex + 1)}
               disabled={activeIndex === PHASES.length - 1}
               aria-label="Next phase"
-              className="text-burgundy transition-opacity hover:opacity-70 disabled:opacity-20"
+              className="flex h-11 w-11 items-center justify-center border border-brown/30 text-burgundy transition-all duration-300 hover:border-burgundy disabled:cursor-not-allowed disabled:opacity-20"
             >
-              →
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </button>
           </div>
         </div>
