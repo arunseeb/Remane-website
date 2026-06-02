@@ -9,6 +9,13 @@ export function JourneyPhases() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const scrollToPanel = useCallback((index: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const panels = track.querySelectorAll<HTMLElement>("[data-phase-panel]");
+    panels[index]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, []);
+
   const updateActiveIndex = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -100,20 +107,39 @@ export function JourneyPhases() {
             ))}
           </div>
 
-          <div
-            className="mt-6 flex justify-center gap-2 md:justify-start md:pl-0"
-            aria-hidden
-          >
-            {PHASES.map((phase, index) => (
-              <span
-                key={phase.title}
-                className={`h-px transition-all duration-500 ${
-                  index === activeIndex
-                    ? "w-10 bg-burgundy"
-                    : "w-6 bg-brown/30"
-                }`}
-              />
-            ))}
+          <div className="mt-6 flex items-center justify-center gap-5 md:justify-start">
+            <button
+              onClick={() => scrollToPanel(activeIndex - 1)}
+              disabled={activeIndex === 0}
+              aria-label="Previous phase"
+              className="text-burgundy transition-opacity hover:opacity-70 disabled:opacity-20"
+            >
+              ←
+            </button>
+
+            <div className="flex items-center gap-2">
+              {PHASES.map((phase, index) => (
+                <button
+                  key={phase.title}
+                  onClick={() => scrollToPanel(index)}
+                  aria-label={`Go to ${phase.title}`}
+                  className={`h-px transition-all duration-500 ${
+                    index === activeIndex
+                      ? "w-10 bg-burgundy"
+                      : "w-6 bg-brown/30 hover:bg-brown/60"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => scrollToPanel(activeIndex + 1)}
+              disabled={activeIndex === PHASES.length - 1}
+              aria-label="Next phase"
+              className="text-burgundy transition-opacity hover:opacity-70 disabled:opacity-20"
+            >
+              →
+            </button>
           </div>
         </div>
       </div>
