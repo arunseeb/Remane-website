@@ -41,22 +41,13 @@ export function Enquiry() {
     setStatus("submitting");
     setErrorDetail("");
     const form = e.currentTarget;
-
-    const els = form.elements;
-    const payload: Record<string, string> = {
-      name:    (els.namedItem("name")    as HTMLInputElement).value,
-      email:   (els.namedItem("email")   as HTMLInputElement).value,
-      phone:   (els.namedItem("phone")   as HTMLInputElement).value,
-      message: (els.namedItem("message") as HTMLTextAreaElement).value,
-    };
-    const gotcha = (els.namedItem("_gotcha") as HTMLInputElement)?.value;
-    if (gotcha) payload._gotcha = gotcha;
+    const data = new FormData(form);
 
     try {
       const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
+        body: data,
+        headers: { Accept: "application/json" },
       });
 
       if (res.ok) {
