@@ -120,9 +120,11 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - Crossfades between 3 local images every 6 s
 - Ken Burns (24s) per slide, dot indicators, reduced-motion aware
 - Images: `public/hero/running.png`, `dressing.png`, `wine.png`
+- Hero includes a "Begin your enquiry →" CTA link anchored to `#enquire`
+- Subtle animated scroll chevron sits above the dot indicators (`opacity-30`, `animate-bounce`)
 
 ### `Manifesto.tsx`
-1. "How it works" 3-step section
+1. "How it works" 3-step section — each step and separator animates in left-to-right on scroll (staggered at 0, 0.18, 0.36 s; separators at 0.09, 0.27 s). Uses `FadeIn from="left"`. Fires once only — does not re-animate on scroll.
 2. Full-screen Aphrodite panel → links to `/our-mission`
 3. JourneyPhases carousel
 
@@ -131,6 +133,13 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - Dot indicators are clickable buttons that jump to a specific panel
 - Scroll uses `getBoundingClientRect` for accurate position (not `offsetLeft`)
 - Active dot synced by `getBoundingClientRect` on scroll
+
+### `FadeIn.tsx` — Scroll-triggered animation wrapper
+- Wraps content in a Framer Motion `motion.div` with `viewport: { once: true }` — animates in once, stays visible
+- Default: fades up from `y: 12`
+- `from="left"` prop: slides in from `x: -20` — used by the "How it works" steps
+- `delay` prop: seconds before animation starts
+- Reduced-motion aware: renders a plain `div` if `prefers-reduced-motion` is set
 
 ### `FAQAccordion.tsx` — FAQ accordion
 - `"use client"` component
@@ -144,10 +153,11 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - 8-second fallback shows Calendly widget if postMessage never fires
 - Loading state: spinning ring animation
 - Calendly URL: `https://calendly.com/arun-seeborun/30min`
+- Price line shown below description: "An investment of £1,000 / month" (appears on both homepage section and `/enquire` page)
 
 ### `Footer.tsx`
 Two rows of links:
-1. About Arun · FAQ · Enquire
+1. Our Philosophy · Testimonials · About Arun · FAQ · Enquire
 2. Privacy · Terms
 
 ---
@@ -203,7 +213,7 @@ To add/remove slides: edit the `SLIDES` array in `src/components/VisualStack.tsx
 ---
 
 ## Browser Icon (Favicon)
-`src/app/favicon.ico` — multi-size ICO (32/48/64/128px) generated from the browser icon PNG with white background flood-filled transparent. Cream circle with burgundy lion. The original source image is at `C:\Users\cexdq\Pictures\Remane\browser icon\browser icon lion.png`.
+`src/app/favicon.ico` and `src/app/icon.png` — generated from the source image with the black corner background flood-filled transparent, leaving the cream circle with burgundy lion. The `icons` field has been removed from `layout.tsx` metadata so Next.js uses the app-directory file convention automatically. The original source image is at `C:\Users\cexdq\Pictures\Remane\browser icon\browser icon lion 2.png`.
 
 ---
 
