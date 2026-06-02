@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata = {
   title: "Phase II: Reconstruction — Remane",
@@ -10,10 +11,10 @@ export default function ReconstructionPage() {
   return (
     <>
       <Header hideDesktopNav />
-    <div className="min-h-screen bg-background px-6 pt-32 pb-24 md:px-10">
+    <div className="min-h-screen bg-background px-6 pt-44 pb-24 md:px-10">
       <div className="mx-auto max-w-2xl">
         <Link
-          href="/"
+          href="/#path"
           className="link-underline text-xs tracking-[0.15em] text-burgundy uppercase"
         >
           ← Remane
@@ -67,9 +68,17 @@ export default function ReconstructionPage() {
           >
             Phase III: Re-entry →
           </Link>
+          <Link
+            href="/enquire"
+            className="text-xs tracking-[0.2em] text-muted uppercase transition-opacity hover:opacity-70"
+          >
+            Enquire
+          </Link>
         </div>
       </div>
     </div>
+      <Footer />
     </>
   );
 }
+

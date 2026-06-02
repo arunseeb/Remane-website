@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata = {
   title: "Testimonials — Remane",
@@ -9,19 +10,19 @@ export const metadata = {
 const TESTIMONIALS = [
   {
     quote:
-      "I came to Remane in pieces. Within three months I had rebuilt my health, my confidence, and my sense of who I am. The guidance was honest, practical, and unlike anything I had experienced before.",
+      "Three months in I barely recognised myself — my health, my sleep, the way I was thinking. I came in pretty broken. The guidance was honest, sometimes uncomfortable. It was exactly what I needed.",
     name: "Private client",
     detail: "Recovery & Reconstruction",
   },
   {
     quote:
-      "What I valued most was the discretion. I didn't want a coach who would share my story. Everything stayed between us, and the progress was real.",
+      "Discretion was everything for me. I didn't want someone who would use my story as a case study. Nothing left the sessions. That trust made all the difference.",
     name: "Private client",
     detail: "Re-entry & Relationship Mastery",
   },
   {
     quote:
-      "I was sceptical. I had tried therapy, books, podcasts. This was different. There was no fluff — just clear direction and genuine accountability.",
+      "I came in sceptical. Tried therapy, read the books, worked through the podcasts. This was different — no motivation speeches, no vague advice. Just clear tasks and someone who wouldn't let me off the hook.",
     name: "Private client",
     detail: "Full engagement",
   },
@@ -31,7 +32,8 @@ export default function TestimonialsPage() {
   return (
     <>
       <Header hideDesktopNav />
-    <div className="min-h-screen bg-background px-6 pt-32 pb-24 md:px-10">
+      <main>
+    <div className="min-h-screen bg-background px-6 pt-44 pb-24 md:px-10">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/"
@@ -71,7 +73,7 @@ export default function TestimonialsPage() {
 
         <div className="mt-20">
           <Link
-            href="/#enquire"
+            href="/enquire"
             className="text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70"
           >
             Request a private conversation →
@@ -79,6 +81,9 @@ export default function TestimonialsPage() {
         </div>
       </div>
     </div>
+      </main>
+      <Footer />
     </>
   );
 }
+

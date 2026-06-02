@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata = {
   title: "Our Philosophy — Remane",
@@ -22,7 +23,7 @@ export default function OurMissionPage() {
   return (
     <>
       <Header hideDesktopNav />
-      <div className="bg-background px-6 pt-32 pb-32 md:px-10">
+      <div className="bg-background px-6 pt-44 pb-32 md:px-10">
 
         {/* Mission statement */}
         <div className="mx-auto max-w-2xl">
@@ -64,7 +65,7 @@ export default function OurMissionPage() {
 
           <div className="mt-16">
             <Link
-              href="/#enquire"
+              href="/enquire"
               className="text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70"
             >
               Request a private conversation →
@@ -82,35 +83,28 @@ export default function OurMissionPage() {
             The principles that guide every engagement, without exception.
           </p>
 
-          <div className="mt-16 space-y-16">
+          <div className="mt-16 grid grid-cols-2 gap-4 items-start">
             {VALUES.map((value, i) => (
               <div
                 key={value.label}
-                className={`flex flex-col md:flex-row md:items-center ${
-                  i % 2 === 1 ? "md:flex-row-reverse" : ""
-                }`}
+                className={`group${i % 2 === 1 ? " mt-10" : ""}`}
               >
-                {/* Image */}
-                <div className="relative aspect-[4/5] w-full flex-shrink-0 overflow-hidden md:w-[55%]">
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#1a1612]">
                   <Image
                     src={value.image}
                     alt={value.alt}
                     fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 400px"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, 336px"
                   />
-                </div>
-
-                {/* Value name — floats in open space beside the image */}
-                <div className="flex flex-1 items-center justify-center px-6 py-8 md:py-0 md:px-8">
-                  <div>
-                    <p className="text-xs tracking-[0.25em] text-gold-muted uppercase">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">
                       {String(i + 1).padStart(2, "0")}
                     </p>
-                    <h3 className="mt-3 font-display text-3xl leading-none text-foreground md:text-4xl">
+                    <h3 className="mt-1 font-display text-xl leading-none text-white">
                       {value.label}
                     </h3>
-                    <div className="mt-4 h-px w-6 bg-gold/50" />
                   </div>
                 </div>
               </div>
@@ -119,6 +113,7 @@ export default function OurMissionPage() {
         </div>
 
       </div>
+      <Footer />
     </>
   );
 }

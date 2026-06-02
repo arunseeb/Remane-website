@@ -14,6 +14,13 @@ Then open http://localhost:3000
 
 ---
 
+## Deployment
+- **GitHub:** https://github.com/arunseeb/Remane-website.git
+- **Host:** Vercel (connect GitHub repo at vercel.com)
+- To redeploy: `git add . && git commit -m "message" && git push`
+
+---
+
 ## Stack
 - **Next.js 16** + React 19 + TypeScript
 - **Tailwind CSS v4** (config via `postcss.config.mjs`, no `tailwind.config.js`)
@@ -28,7 +35,8 @@ Create `remane/.env.local` with:
 ```
 NEXT_PUBLIC_FORMSPREE_ID=your_formspree_form_id
 ```
-Without this, the Enquire form renders but the submit button is disabled. Get the ID from formspree.io → your form → the short code in the endpoint URL.
+Also add this in Vercel → Project → Settings → Environment Variables.
+Without this, the Enquire form renders but submit is disabled. Get the ID from formspree.io → your form → the short code in the endpoint URL.
 
 ---
 
@@ -66,7 +74,7 @@ Without this, the Enquire form renders but the submit button is disabled. Get th
 |---|---|---|
 | `/` | `src/app/page.tsx` | Home — VisualStack + Manifesto + Enquiry |
 | `/privacy` | `src/app/privacy/page.tsx` | Privacy policy |
-| `/our-mission` | `src/app/our-mission/page.tsx` | Brand philosophy |
+| `/our-mission` | `src/app/our-mission/page.tsx` | Displayed as "Our Philosophy" — mission text + values zig-zag |
 | `/testimonials` | `src/app/testimonials/page.tsx` | 3 anonymised client quotes |
 | `/transformations` | `src/app/transformations/page.tsx` | Before/after for each phase |
 | `/path/recovery` | `src/app/path/recovery/page.tsx` | Phase I detail page |
@@ -83,40 +91,58 @@ export const metadata = {
   description: "...",
 };
 ```
-The search API reads this `title` field from the file system at request time — no registration needed. New pages appear in search automatically.
+The search API reads this `title` field from the file system at request time — no registration needed.
+
+All detail pages (everything except `/`) include `<Header hideDesktopNav />` at the top and use `pt-32` instead of `pt-24` to clear the fixed header.
 
 ---
 
 ## Components
 
 ### `Header.tsx` — most complex component
+**Props:** `hideDesktopNav?: boolean` — pass this on all pages except home to hide the desktop nav links (The Path, Enquire).
+
 **Layout:** Hamburger (far left) | Lion + "Remane" (centred) | Nav links + Search icon (far right)
+
+**Sizes (as of last update):**
+- Logo: `h-16 w-16` (64px)
+- "Remane" wordmark: `text-xl md:text-2xl`, `mt-0.5`
+- Hamburger bars: `h-[1.5px] w-6`
+- Search icon: `22×22`, `strokeWidth 2.25`
+- Nav row height: `h-36` when logo visible, `h-16` when scrolled
 
 **Scroll behaviour** (driven by `useHeaderState`):
 - `atTop` (scrollY < 60): transparent background, lion + "Remane" visible, header taller
 - `showBg` (scrolling UP past 50vh): solid off-white background with blur
 - Otherwise: transparent, no logo
 
-**Search:** Click magnifying glass → hamburger disappears, logo stays centred, search bar expands below nav row, entire header goes solid. Search calls `/api/search?q=` with prefix matching. Escape or "Close" to dismiss.
+**Search:** Click magnifying glass → search bar expands below nav row. Calls `/api/search?q=` with prefix matching. Escape or "Close" to dismiss.
 
 **Hamburger drawer:** Slides in from left (w-72). Contains:
-- Our Mission → `/our-mission`
+- Our Philosophy → `/our-mission`
 - Testimonials → `/testimonials`
 - Transformations → `/transformations`
-- The Path (hover only — no click action) → hover expands drawer to w-[36rem], right panel reveals phase sub-links
+- The Path (hover only) → expands to w-[36rem], right panel reveals phase sub-links
 
-**State variables:** `atTop`, `showBg`, `searchOpen`, `menuOpen`, `pathHovered`, `searchQuery`, `searchResults`, `searching`
+### `VisualStack.tsx` — Hero slideshow
+- Single `h-[100svh]` section (replaces the old 3-panel vertical stack)
+- Crossfades between 3 local images every 6 seconds (`lerp: 1200ms`)
+- All slides have `priority` to preload and prevent blank frames
+- Ken Burns (24s) applied per slide
+- Dot indicators at bottom — clickable to jump to any slide
+- Auto-advance pauses if user prefers reduced motion
+- Images in `public/hero/`: `running.png`, `dressing.png`, `wine.png`
+
+### `Manifesto.tsx` — Philosophy section
+Restructured into three parts:
+1. **Text block** — "A bespoke path…" heading + "Private guidance…" subtitle, padded section
+2. **Aphrodite panel** — full-screen `h-[100svh]` image (`/images/aphrodite.png`) with grain, gradient, and a bottom-right overlay: "Our Philosophy" in display font + white pill button linking to `/our-mission`
+3. **Journey phases** — JourneyPhases component with bottom padding
 
 ### `JourneyPhases.tsx` — "The Path" horizontal scroll
 - Panels: `h-[min(58vh,440px)]`, `w-[82vw]` mobile / `md:w-[52vw]` / `lg:w-[42vw]` desktop
-- Each panel has a white pill button "LEARN MORE" (bottom-right) linking to its phase page
-- Button style: `rounded-full bg-white px-6 py-2.5 text-xs text-gold uppercase`
+- Each panel has a white pill "LEARN MORE" button (bottom-right) linking to its phase page
 - Active panel tracked by `activeIndex` (dot indicator below)
-
-### `VisualStack.tsx` — Hero panels
-- 3 full-screen (`h-[100svh]`) sections stacked vertically
-- Each tries to load a local video (`/video/panel-N.mp4`) via HEAD request; falls back to image with Ken Burns animation
-- Images from Unsplash (see `VISUAL_PANELS` in constants)
 
 ### `Enquiry.tsx` — Contact form
 - Controlled by `NEXT_PUBLIC_FORMSPREE_ID` env var
@@ -128,19 +154,20 @@ The search API reads this `title` field from the file system at request time —
 ## Key Data File: `src/lib/constants.ts`
 
 ```ts
-NAV_ITEMS    // Philosophy, The Path, Enquire — header top nav links
-MENU_ITEMS   // Our Mission, Testimonials, Transformations — hamburger drawer
-VISUAL_PANELS // 3 hero image/video panels (Unsplash URLs)
+NAV_ITEMS    // The Path, Enquire — header desktop nav (Philosophy removed)
+MENU_ITEMS   // Our Philosophy, Testimonials, Transformations — hamburger drawer
 PHASES       // 4 journey phases — title, numeral, line, href, image, alt
 ```
 
-### PHASES images
+Note: `VISUAL_PANELS` was removed — hero images are now hardcoded in `VisualStack.tsx`.
+
+### PHASES images — all user-supplied
 | Phase | Image |
 |---|---|
-| Recovery | `/images/recovery.png` (user's own photo) |
-| Reconstruction | `/images/reconstruction.png` (user's own photo) |
-| Re-entry | `/images/re-entry.png` (user's own photo) |
-| Relationship Mastery | Unsplash URL — **user still needs to supply their own image** |
+| Recovery | `/images/recovery.png` |
+| Reconstruction | `/images/reconstruction.png` |
+| Re-entry | `/images/re-entry.png` |
+| Relationship Mastery | `/images/relationship-mastery.png` |
 
 ---
 
@@ -149,37 +176,47 @@ PHASES       // 4 journey phases — title, numeral, line, href, image, alt
 ### `public/brand/`
 | File | Usage |
 |---|---|
-| `logo-red.png` | Header nav logo (transparent background) |
-| `logo-gold.png` | Footer logo (transparent background) |
-| `logo-white.png` | Available — white lion on transparent bg, use on dark backgrounds |
-| `remane-lion-*.png` | Old logos — no longer referenced, can delete |
+| `logo-red.png` | Header nav logo |
+| `logo-gold.png` | Footer logo |
+| `logo-white.png` | Use on dark backgrounds |
+
+### `public/hero/`
+Hero slideshow images (local, user-supplied):
+- `running.png`
+- `dressing.png`
+- `wine.png`
+
+To add/remove slides: edit the `SLIDES` array in `src/components/VisualStack.tsx`.
 
 ### `public/images/`
-User-supplied panel photos. Drop new images here and update `PHASES` in `constants.ts`.
+| File | Usage |
+|---|---|
+| `aphrodite.png` | Full-screen panel in Manifesto |
+| `recovery.png` | Phase I card |
+| `reconstruction.png` | Phase II card |
+| `re-entry.png` | Phase III card |
+| `relationship-mastery.png` | Phase IV card |
+
+### `public/images/values/`
+8 images for the Our Philosophy values zig-zag:
+`truth.png`, `confidentiality.png`, `excellence.png`, `freedom.png`, `brotherhood.png`, `resilience.png`, `compassion.png`, `reinvention.png`
+
+To replace a value image: drop a new file at the same path — no code change needed.
 
 ### `public/video/`
-Empty (`.gitkeep` only). Drop `panel-1.mp4`, `panel-2.mp4`, `panel-3.mp4` here to enable video in the hero panels. VisualStack checks for these automatically.
+Empty (`.gitkeep` only). Not currently used — the old video fallback logic was in the previous VisualStack and has been removed.
 
 ---
 
 ## Search API (`src/app/api/search/route.ts`)
-- Scans `src/app` directory at request time
-- Reads `title:` from each `page.tsx` metadata export
-- Strips " — Remane" suffix and "Phase X:" prefix for display label
-- Prefix-matches on label (e.g. "r" → Recovery, Reconstruction, Re-entry, Relationship Mastery)
-- Returns `[]` for empty query (no results shown until user types)
+- Scans `src/app` at request time, reads `title:` from each `page.tsx`
+- Strips " — Remane" suffix for display label
+- Prefix-matches on label
 - `export const dynamic = "force-dynamic"` — never cached
 
 ---
 
 ## Outstanding / To-Do
-1. **Formspree ID** — add `NEXT_PUBLIC_FORMSPREE_ID=xxx` to `remane/.env.local`
-2. **Relationship Mastery panel image** — user needs to supply a photo; drop in `public/images/relationship-mastery.png` and update `PHASES[3].image` in `constants.ts`
-3. **Hero panel videos** — optional; drop `panel-1.mp4`, `panel-2.mp4`, `panel-3.mp4` into `public/video/`
-4. **Real content** — testimonials, transformations, and mission pages contain placeholder copy; replace with actual client content
-5. **Instagram link** — Footer links to `https://instagram.com` (generic); update to real handle in `src/components/Footer.tsx`
-
----
-
-## Notes on This Next.js Version
-The `AGENTS.md` file (loaded via `CLAUDE.md`) warns this is Next.js 16 with breaking changes. Before adding any Next.js features (routing, image optimisation, middleware, etc.), read the relevant guide in `node_modules/next/dist/docs/`.
+1. **Formspree ID** — add `NEXT_PUBLIC_FORMSPREE_ID=xxx` to `.env.local` and Vercel environment variables
+2. **Instagram link** — Footer links to `https://instagram.com` (generic); update to real handle in `src/components/Footer.tsx`
+3. **Real content** — testimonials, transformations, and phase pages contain placeholder copy

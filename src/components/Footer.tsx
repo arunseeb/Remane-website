@@ -18,17 +18,24 @@ export function Footer() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs tracking-[0.1em] text-muted uppercase">
+          <Link href="/about" className="link-underline hover:text-burgundy">
+            About Arun
+          </Link>
+          <Link href="/faq" className="link-underline hover:text-burgundy">
+            FAQ
+          </Link>
+          <Link href="/enquire" className="link-underline hover:text-burgundy">
+            Enquire
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs tracking-[0.1em] text-muted uppercase">
           <Link href="/privacy" className="link-underline hover:text-burgundy">
             Privacy
           </Link>
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-underline hover:text-burgundy"
-          >
-            Instagram
-          </a>
+          <Link href="/terms" className="link-underline hover:text-burgundy">
+            Terms
+          </Link>
         </div>
       </div>
     </footer>

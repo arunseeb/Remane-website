@@ -26,7 +26,7 @@ export function VisualStack() {
   }, [reduceMotion]);
 
   return (
-    <section className="relative h-[100svh] w-full overflow-hidden bg-[#1a1612]">
+    <section className="relative mt-36 h-[calc(100svh-9rem)] w-full overflow-hidden bg-[#1a1612]">
       {/* Slides — crossfade via opacity */}
       {SLIDES.map((slide, i) => (
         <div
@@ -58,6 +58,16 @@ export function VisualStack() {
 
       {/* Gradient overlay */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/50" />
+
+      {/* Hero text */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+        <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-white tracking-wide max-w-4xl leading-tight">
+          The divorce happened for you. Not to you.
+        </h1>
+        <p className="mt-6 text-base md:text-lg text-white/75 max-w-xl tracking-wide leading-relaxed">
+          A structured system helping successful men rebuild their confidence, identity, relationships, and future after divorce.
+        </p>
+      </div>
 
       {/* Slide indicators */}
       <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">

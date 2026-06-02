@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { MENU_ITEMS, NAV_ITEMS, PHASES } from "@/lib/constants";
 import { useHeaderState } from "@/hooks/useHeaderState";
 
@@ -13,6 +14,7 @@ interface SearchResult {
 
 export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean }) {
   const { atTop, showBg } = useHeaderState();
+  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [pathHovered, setPathHovered] = useState(false);
@@ -62,10 +64,8 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
     }, 120);
   }
 
-  // Solid background when scrolling up past midway OR when search is open
-  const hasBg = (!atTop && showBg) || searchOpen;
-  // Logo visible when at top of page, or always while search is open
-  const showLogo = atTop || searchOpen;
+  const hasBg = true;
+  const showLogo = atTop || searchOpen || menuOpen;
   const showDropdown = searchOpen && searchQuery.trim().length > 0;
 
   return (
@@ -79,48 +79,104 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
         />
       )}
 
+      {/* Hamburger — own stacking context above drawer */}
+      {!searchOpen && (
+        <button
+          onClick={menuOpen ? closeAll : openMenu}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          className="fixed left-2 md:left-3 z-[70] flex flex-col justify-center gap-[5px] p-2 text-burgundy transition-all duration-700"
+          style={{
+            top: 0,
+            height: showLogo ? "9rem" : "4rem",
+            transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          <span className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+          <span className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`} />
+          <span className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${menuOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+        </button>
+      )}
+
       {/* Left drawer — expands to double width when "The Path" is hovered */}
       <div
-        className="fixed top-0 left-0 z-50 h-full bg-background shadow-2xl flex flex-row overflow-hidden transition-all duration-500"
+        className="fixed top-0 left-0 z-[65] h-full bg-background shadow-2xl flex flex-row overflow-hidden transition-all duration-500"
         style={{
           transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
-          width: pathHovered ? "36rem" : "18rem",
+          width: pathHovered ? "min(36rem, 100vw)" : "min(18rem, 85vw)",
           transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
         aria-hidden={!menuOpen}
         onMouseLeave={() => setPathHovered(false)}
       >
-        {/* Left panel — primary menu items */}
-        <div className="w-72 shrink-0 flex flex-col px-10 pt-32 gap-10">
-          {MENU_ITEMS.map((item) => (
+        {/* Left panel — primary menu or mobile path sub-menu */}
+        <div className="w-full md:w-72 shrink-0 flex flex-col px-10 pt-32 overflow-y-auto">
+
+          {/* Mobile path sub-menu — shown when path panel is open on small screens */}
+          <div className={`md:hidden flex-col gap-8 ${pathHovered ? "flex" : "hidden"}`}>
+            <button
+              onClick={() => setPathHovered(false)}
+              className="text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-burgundy"
+            >
+              ← Back
+            </button>
+            <p className="mt-2 text-xs tracking-[0.18em] text-muted uppercase">The Path</p>
+            {PHASES.map((phase) => (
+              <Link
+                key={phase.href}
+                href={phase.href}
+                onClick={closeAll}
+                className="font-display text-2xl text-foreground transition-colors duration-300 hover:text-burgundy"
+              >
+                {phase.title}
+              </Link>
+            ))}
+          </div>
+
+          {/* Main menu — hidden on mobile when path sub-menu is open */}
+          <div className={`flex flex-col gap-10 ${pathHovered ? "hidden md:flex" : ""}`}>
+            {/* First item: Our Philosophy */}
             <Link
-              key={item.href}
-              href={item.href}
+              href={MENU_ITEMS[0].href}
               onClick={() => setMenuOpen(false)}
               onMouseEnter={() => setPathHovered(false)}
-              className="font-display text-3xl text-foreground hover:text-burgundy transition-colors duration-300"
+              className={`font-display text-3xl transition-colors duration-300 ${pathname === MENU_ITEMS[0].href ? "text-burgundy" : "text-foreground hover:text-burgundy"}`}
             >
-              {item.label}
+              {MENU_ITEMS[0].label}
             </Link>
-          ))}
 
-          {/* The Path — hover reveals right panel, click does nothing */}
-          <button
-            onMouseEnter={() => setPathHovered(true)}
-            className="flex items-center gap-3 text-left font-display text-3xl text-foreground transition-colors duration-300 hover:text-burgundy"
-          >
-            The Path
-            <span
-              className="text-gold transition-transform duration-300"
-              style={{ transform: pathHovered ? "translateX(4px)" : "translateX(0)" }}
+            {/* The Path — hover reveals right panel on desktop; tap toggles inline sub-menu on mobile */}
+            <button
+              onMouseEnter={() => setPathHovered(true)}
+              onClick={() => setPathHovered((prev) => !prev)}
+              className={`flex items-center gap-3 text-left font-display text-3xl transition-colors duration-300 hover:text-burgundy ${pathname.startsWith("/path") ? "text-burgundy" : "text-foreground"}`}
             >
-              ›
-            </span>
-          </button>
+              The Path
+              <span
+                className="text-gold transition-transform duration-300"
+                style={{ transform: pathHovered ? "translateX(4px)" : "translateX(0)" }}
+              >
+                ›
+              </span>
+            </button>
+
+            {/* Remaining items: Testimonials, About Arun, FAQ, Enquire */}
+            {MENU_ITEMS.slice(1).map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                onMouseEnter={() => setPathHovered(false)}
+                className={`font-display text-3xl transition-colors duration-300 ${pathname === item.href ? "text-burgundy" : "text-foreground hover:text-burgundy"}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {/* Right panel — phase sub-links, revealed on hover */}
-        <div className="w-72 shrink-0 flex flex-col pt-32 px-10 gap-8 border-l border-brown/10">
+        {/* Right panel — phase sub-links, desktop only */}
+        <div className="hidden md:flex w-72 shrink-0 flex-col pt-32 px-10 gap-8 border-l border-brown/10">
           <p className="text-xs tracking-[0.18em] text-muted uppercase">The Path</p>
           {PHASES.map((phase) => (
             <Link
@@ -135,7 +191,6 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
         </div>
       </div>
 
-      {/* Header — z-[60] sits above the drawer */}
       <header
         className="fixed top-0 z-[60] w-full transition-all duration-700"
         style={{
@@ -153,32 +208,6 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
           }`}
           style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
         >
-          {/* Far left: hamburger — hidden while search is open */}
-          {!searchOpen && (
-            <button
-              onClick={menuOpen ? closeAll : openMenu}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
-              className="relative z-10 mr-auto flex flex-col gap-[5px] p-2 text-burgundy"
-            >
-              <span
-                className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${
-                  menuOpen ? "translate-y-[7px] rotate-45" : ""
-                }`}
-              />
-              <span
-                className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${
-                  menuOpen ? "opacity-0" : ""
-                }`}
-              />
-              <span
-                className={`block h-[1.5px] w-6 bg-current transition-all duration-300 ${
-                  menuOpen ? "-translate-y-[7px] -rotate-45" : ""
-                }`}
-              />
-            </button>
-          )}
-
           {/* Centre: lion + name — visible at top of page, and always while search is open */}
           <Link
             href="/"
@@ -207,16 +236,16 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
             </div>
           </Link>
 
-          {/* Far right: nav links + search icon (normal) OR close button (search open) */}
+          {/* Far right: nav links + search icon — hidden when menu is open */}
           <div className="ml-auto flex items-center gap-5 sm:gap-8 md:gap-10">
-            {searchOpen ? (
+            {!menuOpen && searchOpen ? (
               <button
                 onClick={closeAll}
                 className="text-muted hover:text-burgundy transition-colors duration-300 text-sm tracking-widest uppercase"
               >
                 Close
               </button>
-            ) : (
+            ) : !menuOpen ? (
               <>
                 {!hideDesktopNav && (
                   <nav className="hidden md:flex items-center gap-8" aria-label="Main">
@@ -251,7 +280,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                   </svg>
                 </button>
               </>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -279,7 +308,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                 placeholder="Search pages…"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="flex-1 bg-transparent border-b border-brown/30 pb-2 text-foreground placeholder:text-muted/50 focus:border-burgundy focus:outline-none text-sm tracking-wide"
+                className="flex-1 bg-transparent border-b border-brown/30 pb-2 text-foreground placeholder:text-muted/50 focus:border-burgundy focus:outline-none text-base md:text-sm tracking-wide"
                 onKeyDown={(e) => e.key === "Escape" && closeAll()}
               />
             </div>

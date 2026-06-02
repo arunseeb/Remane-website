@@ -1,13 +1,28 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { InlineWidget } from "react-calendly";
 import { FadeIn } from "@/components/FadeIn";
 
-type FormStatus = "idle" | "submitting" | "success" | "error";
+type FormStatus = "idle" | "submitting" | "success" | "booked" | "error";
 
 export function Enquiry() {
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [calendlyReady, setCalendlyReady] = useState(false);
   const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.data?.event === "calendly.event_scheduled") {
+        setStatus("booked");
+      }
+      if (e.data?.event === "calendly.profile_page_viewed") {
+        setCalendlyReady(true);
+      }
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,20 +61,42 @@ export function Enquiry() {
       <div className="mx-auto max-w-lg">
         <FadeIn>
           <h2 className="text-center font-display text-3xl text-foreground md:text-4xl">
-            Request a private conversation
+            Begin your enquiry
           </h2>
           <p className="mt-6 text-center text-sm leading-relaxed text-muted">
-            Entirely private. Each enquiry is considered personally.
+            Entirely private. Each enquiry is considered personally. You will hear back within 24 hours.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.12}>
-          {status === "success" ? (
+          {status === "booked" ? (
             <p className="mt-14 text-center font-display text-xl text-foreground">
               Thank you. We will be in touch if there is a fit.
             </p>
+          ) : status === "success" ? (
+            <div className="mt-14">
+              <p className="mb-8 text-center text-sm text-muted">
+                Enquiry received — now pick a time that suits you.
+              </p>
+              <div className="relative" style={{ minWidth: "320px", height: "700px" }}>
+                {!calendlyReady && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                    <div className="h-px w-12 animate-pulse bg-brown/40" />
+                    <p className="text-xs tracking-[0.2em] text-muted uppercase">Loading calendar…</p>
+                  </div>
+                )}
+                <div className={calendlyReady ? "opacity-100" : "opacity-0"} style={{ height: "700px" }}>
+                  <InlineWidget
+                    url="https://calendly.com/arun-seeborun/30min"
+                    styles={{ minWidth: "320px", height: "700px" }}
+                  />
+                </div>
+              </div>
+            </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-14 space-y-8">
+              {/* Honeypot — hidden from humans, bots fill it, Formspree silently drops the submission */}
+              <input type="text" name="_gotcha" tabIndex={-1} aria-hidden="true" className="hidden" />
               <div>
                 <label htmlFor="name" className="sr-only">
                   Name
@@ -85,6 +122,20 @@ export function Enquiry() {
                   required
                   autoComplete="email"
                   placeholder="Email"
+                  className="w-full border-0 border-b border-brown/30 bg-transparent py-3 text-foreground placeholder:text-muted/60 focus:border-burgundy focus:outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="phone" className="sr-only">
+                  Phone number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  autoComplete="tel"
+                  placeholder="Phone number"
                   className="w-full border-0 border-b border-brown/30 bg-transparent py-3 text-foreground placeholder:text-muted/60 focus:border-burgundy focus:outline-none"
                 />
               </div>
@@ -142,6 +193,8 @@ export function Enquiry() {
             </form>
           )}
         </FadeIn>
+
+
       </div>
     </section>
   );

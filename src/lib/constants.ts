@@ -6,7 +6,9 @@ export const NAV_ITEMS = [
 export const MENU_ITEMS = [
   { label: "Our Philosophy", href: "/our-mission" },
   { label: "Testimonials", href: "/testimonials" },
-  { label: "Transformations", href: "/transformations" },
+  { label: "About Arun", href: "/about" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Enquire", href: "/enquire" },
 ] as const;
 
 export const VISUAL_PANELS = [

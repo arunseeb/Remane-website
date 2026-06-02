@@ -18,6 +18,7 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "Remane — Private guidance for men rebuilding with intention",
   description:
     "A bespoke path from recovery to mastery. Private coaching for emotional recovery, refinement, connection, and relationship mastery.",
@@ -26,6 +27,20 @@ export const metadata: Metadata = {
     description:
       "A bespoke path from recovery to mastery. Private guidance for men rebuilding with intention.",
     type: "website",
+    images: [
+      {
+        url: "/brand/logo-red.png",
+        width: 1200,
+        height: 1200,
+        alt: "Remane",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Remane",
+    description: "A bespoke path from recovery to mastery.",
+    images: ["/brand/logo-red.png"],
   },
   icons: {
     icon: "/brand/logo-red.png",

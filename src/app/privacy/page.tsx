@@ -9,7 +9,7 @@ export default function PrivacyPage() {
   return (
     <>
       <Header hideDesktopNav />
-    <div className="min-h-screen bg-background px-6 pt-32 pb-24 md:px-10">
+    <div className="min-h-screen bg-background px-6 pt-44 pb-24 md:px-10">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/"
@@ -82,3 +82,4 @@ export default function PrivacyPage() {
     </>
   );
 }
+
