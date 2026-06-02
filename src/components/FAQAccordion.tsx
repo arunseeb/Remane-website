@@ -13,7 +13,7 @@ export function FAQAccordion({ sections }: { sections: FAQSection[] }) {
     <div className="mt-16 space-y-16">
       {sections.map((section) => (
         <div key={section.heading}>
-          <p className="mb-8 text-xs tracking-[0.2em] text-muted uppercase">
+          <p className="mb-8 text-center text-sm tracking-[0.2em] text-muted uppercase">
             {section.heading}
           </p>
           <div>
