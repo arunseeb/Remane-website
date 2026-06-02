@@ -9,7 +9,6 @@ type FormStatus = "idle" | "submitting" | "success" | "booked" | "error";
 export function Enquiry() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [calendlyReady, setCalendlyReady] = useState(false);
-  const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID ?? "xlgvydll";
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
@@ -41,27 +40,32 @@ export function Enquiry() {
     setStatus("submitting");
     setErrorDetail("");
     const form = e.currentTarget;
-    const data = new FormData(form);
+    const els = form.elements;
 
     try {
-      const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
+      const res = await fetch("/api/enquire", {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name:    (els.namedItem("name")    as HTMLInputElement).value,
+          email:   (els.namedItem("email")   as HTMLInputElement).value,
+          phone:   (els.namedItem("phone")   as HTMLInputElement).value,
+          message: (els.namedItem("message") as HTMLTextAreaElement).value,
+        }),
       });
+
+      const data = await res.json().catch(() => ({})) as { ok?: boolean; error?: string };
 
       if (res.ok) {
         setStatus("success");
         form.reset();
       } else {
-        const body = await res.json().catch(() => null);
-        const detail = body?.error ?? body?.errors?.[0]?.message ?? `Status ${res.status}`;
-        console.error("Formspree error:", res.status, body);
-        setErrorDetail(detail);
+        console.error("Enquiry error:", data);
+        setErrorDetail(data.error ?? `Status ${res.status}`);
         setStatus("error");
       }
     } catch (err) {
-      console.error("Formspree fetch failed:", err);
+      console.error("Enquiry fetch failed:", err);
       setErrorDetail(err instanceof Error ? err.message : String(err));
       setStatus("error");
     }
@@ -186,14 +190,6 @@ export function Enquiry() {
                 </span>
               </label>
 
-              {!formspreeId && status !== "submitting" && (
-                <p className="text-center text-xs text-muted">
-                  Formspree is not configured yet. Add{" "}
-                  <code className="text-brown-dark">NEXT_PUBLIC_FORMSPREE_ID</code>{" "}
-                  to <code className="text-brown-dark">.env.local</code>.
-                </p>
-              )}
-
               {status === "error" && (
                 <p className="text-center text-sm text-burgundy">
                   Something went wrong. Please try again or contact us directly.
@@ -205,7 +201,7 @@ export function Enquiry() {
 
               <button
                 type="submit"
-                disabled={status === "submitting" || !formspreeId}
+                disabled={status === "submitting"}
                 className="w-full py-4 text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {status === "submitting" ? "Sending…" : "Submit enquiry"}
