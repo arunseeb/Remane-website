@@ -23,7 +23,7 @@ const securityHeaders = [
       // Formspree form posts + Calendly API calls
       "connect-src 'self' https://formspree.io https://calendly.com https://*.calendly.com",
       // Calendly inline widget iframe
-      "frame-src https://calendly.com",
+      "frame-src https://calendly.com https://*.calendly.com",
       // Prevent this site from being embedded elsewhere
       "frame-ancestors 'self'",
     ].join("; "),

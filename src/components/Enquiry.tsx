@@ -9,20 +9,30 @@ type FormStatus = "idle" | "submitting" | "success" | "booked" | "error";
 export function Enquiry() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [calendlyReady, setCalendlyReady] = useState(false);
-  const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+  const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID ?? "xlgvydll";
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.data?.event === "calendly.event_scheduled") {
         setStatus("booked");
       }
-      if (e.data?.event === "calendly.profile_page_viewed") {
+      if (
+        e.data?.event === "calendly.event_type_viewed" ||
+        e.data?.event === "calendly.profile_page_viewed"
+      ) {
         setCalendlyReady(true);
       }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  // Fallback: show the widget after 8 s if the postMessage never fires
+  useEffect(() => {
+    if (status !== "success") return;
+    const t = setTimeout(() => setCalendlyReady(true), 8000);
+    return () => clearTimeout(t);
+  }, [status]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -80,8 +90,11 @@ export function Enquiry() {
               </p>
               <div className="relative" style={{ minWidth: "320px", height: "700px" }}>
                 {!calendlyReady && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                    <div className="h-px w-12 animate-pulse bg-brown/40" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+                    <div
+                      className="h-7 w-7 rounded-full border-[1.5px] border-gold/20 animate-spin"
+                      style={{ borderTopColor: "var(--gold)" }}
+                    />
                     <p className="text-xs tracking-[0.2em] text-muted uppercase">Loading calendar…</p>
                   </div>
                 )}
