@@ -29,7 +29,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 gap-16 md:grid-cols-2 md:items-start">
 
             {/* Photo */}
-            <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#1a1612]">
+            <div className="grain vintage-image relative aspect-[3/4] w-full overflow-hidden bg-[#1a1612]">
               <Image
                 src="/about/arun.png"
                 alt="Arun Seeborun"
@@ -77,7 +77,7 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              <blockquote className="mt-10 border-l-2 border-burgundy pl-6">
+              <blockquote className="mt-10 border-l border-burgundy/70 pl-6">
                 <p className="font-display text-xl text-foreground leading-snug">
                   &ldquo;The end of a relationship doesn&apos;t have to be the end of
                   your story. Sometimes it&apos;s where your real story begins.&rdquo;
@@ -106,9 +106,9 @@ export default function AboutPage() {
               <div className="mt-12 pb-28">
                 <Link
                   href="/enquire"
-                  className="text-xs tracking-[0.25em] text-burgundy uppercase hover:opacity-70 transition-opacity"
+                  className="inline-block border border-burgundy/50 px-7 py-3 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5"
                 >
-                  Request a conversation →
+                  Request a conversation
                 </Link>
               </div>
             </div>

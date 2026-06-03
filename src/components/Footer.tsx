@@ -13,6 +13,8 @@ export function Footer() {
           className="h-9 w-9 object-contain opacity-90"
         />
 
+        <div className="h-px w-8 bg-gold/40" />
+
         <p className="text-xs tracking-[0.12em] text-muted">
           © {new Date().getFullYear()} Remane. Trading as Remane.
         </p>

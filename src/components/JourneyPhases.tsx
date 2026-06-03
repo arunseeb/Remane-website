@@ -87,7 +87,7 @@ export function JourneyPhases() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
                 <div className="pointer-events-none absolute inset-4 border border-gold/30" />
 
-                <span className="absolute top-6 left-6 font-display text-6xl text-gold/25 md:text-7xl">
+                <span className="absolute top-6 left-6 font-display text-6xl text-gold/40 md:text-7xl">
                   {phase.numeral}
                 </span>
 
@@ -99,14 +99,13 @@ export function JourneyPhases() {
                   <p className="mt-4 max-w-md text-sm leading-relaxed text-[#faf8f5]/85 md:text-base">
                     {phase.line}
                   </p>
+                  <Link
+                    href={phase.href}
+                    className="pointer-events-auto mt-5 inline-block rounded-full bg-white px-6 py-2.5 text-xs tracking-[0.15em] text-gold uppercase transition-all duration-300 hover:bg-white/90 md:px-7 md:py-3 md:text-sm"
+                  >
+                    Learn more
+                  </Link>
                 </div>
-
-                <Link
-                  href={phase.href}
-                  className="absolute right-6 bottom-6 rounded-full bg-white px-6 py-2.5 text-xs tracking-[0.15em] text-gold uppercase transition-all duration-300 hover:bg-white/90 md:right-8 md:bottom-8 md:px-7 md:py-3 md:text-sm"
-                >
-                  Learn more
-                </Link>
               </article>
             ))}
           </div>

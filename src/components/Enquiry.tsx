@@ -74,7 +74,7 @@ export function Enquiry() {
   return (
     <section
       id="enquire"
-      className="scroll-mt-24 border-t border-brown/10 bg-surface px-6 py-28 md:px-10 md:py-40"
+      className="scroll-mt-24 border-t border-gold/20 bg-surface px-6 py-28 md:px-10 md:py-40"
     >
       <div className="mx-auto max-w-lg">
         <FadeIn>
@@ -205,7 +205,7 @@ export function Enquiry() {
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="w-full py-4 text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-full border border-burgundy/50 py-4 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {status === "submitting" ? "Sending…" : "Submit enquiry"}
               </button>

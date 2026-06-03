@@ -146,9 +146,9 @@ export default function FAQPage() {
             <p className="text-sm text-muted">Still have a question?</p>
             <Link
               href="/enquire"
-              className="mt-3 inline-block text-xs tracking-[0.25em] text-burgundy uppercase hover:opacity-70 transition-opacity"
+              className="mt-6 inline-block border border-burgundy/50 px-7 py-3 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5"
             >
-              Request a conversation →
+              Request a conversation
             </Link>
           </div>
         </div>

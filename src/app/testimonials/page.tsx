@@ -74,9 +74,9 @@ export default function TestimonialsPage() {
         <div className="mt-20">
           <Link
             href="/enquire"
-            className="text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70"
+            className="inline-block border border-burgundy/50 px-7 py-3 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5"
           >
-            Request a private conversation →
+            Request a private conversation
           </Link>
         </div>
       </div>

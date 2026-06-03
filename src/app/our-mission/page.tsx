@@ -66,9 +66,9 @@ export default function OurMissionPage() {
           <div className="mt-16">
             <Link
               href="/enquire"
-              className="text-xs tracking-[0.25em] text-burgundy uppercase transition-opacity hover:opacity-70"
+              className="inline-block border border-burgundy/50 px-7 py-3 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5"
             >
-              Request a private conversation →
+              Request a private conversation
             </Link>
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function OurMissionPage() {
                 key={value.label}
                 className={`group${i % 2 === 1 ? " mt-10" : ""}`}
               >
-                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#1a1612]">
+                <div className="grain vintage-image relative aspect-[3/4] w-full overflow-hidden bg-[#1a1612]">
                   <Image
                     src={value.image}
                     alt={value.alt}
@@ -98,6 +98,7 @@ export default function OurMissionPage() {
                     sizes="(max-width: 768px) 50vw, 336px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/20" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">
                       {String(i + 1).padStart(2, "0")}

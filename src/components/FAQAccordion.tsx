@@ -29,9 +29,20 @@ export function FAQAccordion({ sections }: { sections: FAQSection[] }) {
                     <span className="font-display text-xl text-foreground pr-8">
                       {item.q}
                     </span>
-                    <span className="flex-shrink-0 font-sans text-lg text-gold/50 select-none">
-                      {isOpen ? "−" : "+"}
-                    </span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="flex-shrink-0 text-gold/50 transition-transform duration-300"
+                      style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
                   </button>
                   <AnimatePresence initial={false}>
                     {isOpen && (

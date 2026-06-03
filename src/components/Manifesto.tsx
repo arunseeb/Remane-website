@@ -60,15 +60,19 @@ export function Manifesto() {
               <Fragment key={item.step}>
                 {i > 0 && (
                   <FadeIn from="left" delay={i * 0.18 - 0.09} className="hidden md:flex md:items-center md:self-center md:px-1 md:pb-10">
-                    <span className="font-display text-3xl tracking-[0.5em] text-gold/40">– – –</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-px w-6 bg-gold/30" />
+                      <div className="h-1 w-1 rounded-full bg-gold/40" />
+                      <div className="h-px w-6 bg-gold/30" />
+                    </div>
                   </FadeIn>
                 )}
               <FadeIn from="left" delay={i * 0.18} className="md:flex-1">
                 <div className="flex flex-col items-center text-center md:px-8">
-                  <p className="font-display text-5xl text-gold/30">{item.step}</p>
+                  <p className="font-display text-5xl text-gold/40">{item.step}</p>
                   <h3 className="mt-4 font-display text-2xl text-foreground">{item.title}</h3>
-                  <div className="mx-auto mt-4 h-px w-8 bg-gold/40" />
                   <div className="mt-5 text-gold/60">{item.icon}</div>
+                  <div className="mx-auto mt-5 h-px w-8 bg-gold/40" />
                   <p className="mt-5 text-sm leading-relaxed text-muted">{item.body}</p>
                 </div>
               </FadeIn>

@@ -114,6 +114,11 @@ body {
   outline-offset: 3px;
 }
 
+@keyframes softpulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
 @keyframes kenburns {
   from {
     transform: scale(1);
