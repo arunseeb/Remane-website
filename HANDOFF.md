@@ -65,10 +65,19 @@ Set these in Vercel → Project → Settings → Environment Variables, and loca
 ### CSS Classes
 - `.nav-link` — burgundy text, gold underline on hover (header nav)
 - `.link-underline` — burgundy underline on hover (footers, back-links)
-- `.grain` — film grain overlay via `::after` pseudo-element
-- `.vintage-image` — subtle `saturate(0.92) contrast(1.02)` filter
+- `.grain` — film grain overlay via `::after` pseudo-element. Apply to any image container that should have the film feel.
+- `.vintage-image` — subtle `saturate(0.92) contrast(1.02)` filter. Always pair with `.grain` on image containers.
 - `.path-track` — horizontal snap scroll container
 - `.path-panel` — individual snap panel
+- `@keyframes softpulse` — fades between `opacity: 0.3` and `0.6` over 2.5 s. Used by scroll chevron.
+- `@keyframes kenburns` — slow scale from 1 → 1.06 over 24 s. Used by hero slides.
+
+### CTA Button Convention
+All call-to-action buttons (not nav links, not phase navigation) use the bordered rectangle pattern:
+```
+inline-block border border-burgundy/50 px-7 py-3 text-xs tracking-[0.25em] text-burgundy uppercase transition-all duration-300 hover:border-burgundy hover:bg-burgundy/5
+```
+No arrows. No pills (pills are reserved for dark image overlays — "Learn more", "Explore"). The enquiry submit button uses `w-full` instead of `inline-block`.
 
 ---
 
@@ -120,11 +129,16 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - Crossfades between 3 local images every 6 s
 - Ken Burns (24s) per slide, dot indicators, reduced-motion aware
 - Images: `public/hero/running.png`, `dressing.png`, `wine.png`
-- Hero includes a "Begin your enquiry →" CTA link anchored to `#enquire`
-- Subtle animated scroll chevron sits above the dot indicators (`opacity-30`, `animate-bounce`)
+- **Hero text stagger:** headline, subtitle, and CTA are Framer Motion `motion` elements with `animate` (fires on mount, not scroll). Delays: 0.4 s / 0.9 s / 1.3 s, duration 1.5 s, easing `[0.22, 1, 0.36, 1]`. Reduced-motion aware.
+- Hero h1: `leading-[1.15]` on mobile, `leading-tight` from `md:` up
+- CTA is a plain text link with `border-b border-gold/50` underline and `tracking-[0.32em]` — no arrow, no pill
+- Scroll chevron uses `animate-[softpulse_2.5s_ease-in-out_infinite]` (defined in `globals.css`) instead of `animate-bounce`
 
 ### `Manifesto.tsx`
 1. "How it works" 3-step section — each step and separator animates in left-to-right on scroll (staggered at 0, 0.18, 0.36 s; separators at 0.09, 0.27 s). Uses `FadeIn from="left"`. Fires once only — does not re-animate on scroll.
+   - Step numbers: `text-gold/40`
+   - Step layout order: numeral → title → icon → gold divider → body text
+   - Desktop separators between steps: line·dot·line motif (`h-px w-6 bg-gold/30` + `h-1 w-1 rounded-full bg-gold/40` + `h-px w-6 bg-gold/30`)
 2. Full-screen Aphrodite panel → links to `/our-mission`
 3. JourneyPhases carousel
 
@@ -133,6 +147,8 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - Dot indicators are clickable buttons that jump to a specific panel
 - Scroll uses `getBoundingClientRect` for accurate position (not `offsetLeft`)
 - Active dot synced by `getBoundingClientRect` on scroll
+- Phase numerals: `text-gold/40`
+- "Learn more" button lives **inside** the text `div` (not independently absolute-positioned) so it flows below the text on mobile and cannot overlap it
 
 ### `FadeIn.tsx` — Scroll-triggered animation wrapper
 - Wraps content in a Framer Motion `motion.div` with `viewport: { once: true }` — animates in once, stays visible
@@ -144,6 +160,7 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 ### `FAQAccordion.tsx` — FAQ accordion
 - `"use client"` component
 - Single open item at a time; Framer Motion height animation
+- Open/close indicator: 16px SVG chevron that rotates 180° on open (`transition-transform duration-300`)
 - Used by `src/app/faq/page.tsx`
 
 ### `Enquiry.tsx` — Contact form
@@ -154,11 +171,14 @@ All detail pages include `<Header hideDesktopNav />` and `<Footer />`. Path page
 - Loading state: spinning ring animation
 - Calendly URL: `https://calendly.com/arun-seeborun/30min`
 - Price line shown below description: "An investment of £1,000 / month" (appears on both homepage section and `/enquire` page)
+- Section top border: `border-t border-gold/20`
+- Submit button uses the bordered rectangle convention (full-width variant)
 
 ### `Footer.tsx`
-Two rows of links:
-1. Our Philosophy · Testimonials · About Arun · FAQ · Enquire
-2. Privacy · Terms
+- Gold logo → thin gold rule (`h-px w-8 bg-gold/40`) → copyright → nav links → legal links
+- Two rows of links:
+  1. Our Philosophy · Testimonials · About Arun · FAQ · Enquire
+  2. Privacy · Terms
 
 ---
 
