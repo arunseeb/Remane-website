@@ -43,25 +43,27 @@ export function Enquiry() {
     const els = form.elements;
 
     try {
-      const res = await fetch("/api/enquire", {
+      const res = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ID}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           name:    (els.namedItem("name")    as HTMLInputElement).value,
           email:   (els.namedItem("email")   as HTMLInputElement).value,
           phone:   (els.namedItem("phone")   as HTMLInputElement).value,
           message: (els.namedItem("message") as HTMLTextAreaElement).value,
+          _gotcha: (els.namedItem("_gotcha") as HTMLInputElement).value,
         }),
       });
 
-      const data = await res.json().catch(() => ({})) as { ok?: boolean; error?: string };
+      const data = await res.json().catch(() => ({})) as { errors?: { message: string }[] };
 
       if (res.ok) {
         setStatus("success");
         form.reset();
       } else {
+        const errorMsg = data.errors?.[0]?.message ?? `Status ${res.status}`;
         console.error("Enquiry error:", data);
-        setErrorDetail(data.error ?? `Status ${res.status}`);
+        setErrorDetail(errorMsg);
         setStatus("error");
       }
     } catch (err) {

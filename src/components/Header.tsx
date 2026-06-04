@@ -116,7 +116,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
           <div className={`md:hidden flex-col gap-8 ${pathHovered ? "flex" : "hidden"}`}>
             <button
               onClick={() => setPathHovered(false)}
-              className="text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-burgundy"
+              className="text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-brown"
             >
               ← Back
             </button>
@@ -126,7 +126,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                 key={phase.href}
                 href={phase.href}
                 onClick={closeAll}
-                className="font-display text-2xl text-foreground transition-colors duration-300 hover:text-burgundy"
+                className="font-display text-2xl text-foreground transition-colors duration-300 hover:text-muted"
               >
                 {phase.title}
               </Link>
@@ -140,7 +140,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
               href={MENU_ITEMS[0].href}
               onClick={() => setMenuOpen(false)}
               onMouseEnter={() => setPathHovered(false)}
-              className={`font-display text-3xl transition-colors duration-300 ${pathname === MENU_ITEMS[0].href ? "text-burgundy" : "text-foreground hover:text-burgundy"}`}
+              className={`font-display text-3xl transition-colors duration-300 ${pathname === MENU_ITEMS[0].href ? "text-burgundy" : "text-foreground hover:text-muted"}`}
             >
               {MENU_ITEMS[0].label}
             </Link>
@@ -149,7 +149,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
             <button
               onMouseEnter={() => setPathHovered(true)}
               onClick={() => setPathHovered((prev) => !prev)}
-              className={`flex items-center gap-3 text-left font-display text-3xl transition-colors duration-300 hover:text-burgundy ${pathname.startsWith("/path") ? "text-burgundy" : "text-foreground"}`}
+              className={`flex items-center gap-3 text-left font-display text-3xl transition-colors duration-300 hover:text-muted ${pathname.startsWith("/path") ? "text-burgundy" : "text-foreground"}`}
             >
               The Path
               <span
@@ -167,7 +167,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 onMouseEnter={() => setPathHovered(false)}
-                className={`font-display text-3xl transition-colors duration-300 ${pathname === item.href ? "text-burgundy" : "text-foreground hover:text-burgundy"}`}
+                className={`font-display text-3xl transition-colors duration-300 ${pathname === item.href ? "text-burgundy" : "text-foreground hover:text-muted"}`}
               >
                 {item.label}
               </Link>
@@ -183,7 +183,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
               key={phase.href}
               href={phase.href}
               onClick={closeAll}
-              className="font-display text-2xl text-foreground transition-colors duration-300 hover:text-burgundy"
+              className="font-display text-2xl text-foreground transition-colors duration-300 hover:text-muted"
             >
               {phase.title}
             </Link>
