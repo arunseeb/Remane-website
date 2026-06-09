@@ -21,7 +21,7 @@ export function Manifesto() {
               {
                 step: "01",
                 title: "Enquire",
-                body: "Submit a private enquiry. Each one is read personally and considered before any response is made.",
+                body: "Submit a private enquiry — completely free. Each one is read personally and considered before any response is made.",
                 icon: (
                   <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="4" y="9" width="28" height="20" rx="1" />
@@ -32,7 +32,7 @@ export function Manifesto() {
               {
                 step: "02",
                 title: "Assessment",
-                body: "A personal interview to understand where you are, what you need, and which phases apply to you.",
+                body: "A personal interview — completely free — to understand where you are, what you need, and which phases apply to you.",
                 icon: (
                   <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="18" cy="18" r="13" />

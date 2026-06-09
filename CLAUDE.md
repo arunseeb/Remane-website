@@ -8,14 +8,14 @@ A premium private coaching website for men rebuilding after divorce. One-to-one 
 ## Stack
 - **Next.js 16** (App Router, TypeScript, Turbopack)
 - **Tailwind CSS** with a custom design system
-- **Formspree** (`xlgvydll`) for form submissions
+- **Formspree** (`mykayqjo`) for form submissions
 - **react-calendly** for inline booking widget
 - **Framer Motion** for fade-in animations
 - **Lenis** for smooth scrolling
 
 ## Environment variables
 ```
-NEXT_PUBLIC_FORMSPREE_ID=xlgvydll
+NEXT_PUBLIC_FORMSPREE_ID=mykayqjo
 NEXT_PUBLIC_SITE_URL=http://localhost:3000   # set to production domain on deploy
 ```
 
@@ -43,7 +43,8 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000   # set to production domain on deplo
 
 ## Key components
 - **`Header.tsx`** — Fixed navbar with hamburger drawer. Hamburger is a standalone `fixed` element at `z-[70]` (above drawer at `z-[65]`, above header at `z-[60]`). Logo shows when `atTop` or `menuOpen`. Nav links (The Path, Enquire) disappear when menu opens. Active page highlighted in burgundy via `usePathname`.
-- **`Enquiry.tsx`** — Formspree form → on success shows Calendly `InlineWidget` → on `calendly.event_scheduled` postMessage shows thank you. Has honeypot field (`_gotcha`). Calendly has loading skeleton until `calendly.profile_page_viewed` fires.
+- **`Enquiry.tsx`** — Posts directly to Formspree (`NEXT_PUBLIC_FORMSPREE_ID`) as JSON with `Accept: application/json`. On success shows Calendly `InlineWidget` → on `calendly.event_scheduled` postMessage shows thank you. Has honeypot field (`_gotcha`). Calendly has loading skeleton until `calendly.profile_page_viewed` fires. Note: `/api/enquire` (Resend-based route) still exists in the codebase but is unused.
+- **`Footer.tsx`** — Social icons for Instagram (`remaneofficial`), Facebook (`61590226217685`), YouTube (`@RemaneOfficial`). Icons are inline SVG, muted by default, burgundy on hover.
 - **`VisualStack.tsx`** — Hero slideshow with Ken Burns effect. Height is `calc(100svh - 9rem)` with `mt-36` to clear the navbar.
 - **`Manifesto.tsx`** — "How it works" 3-step section + full-screen Philosophy panel + JourneyPhases scroll.
 - **`JourneyPhases.tsx`** — Horizontal scroll carousel of the 4 phases with active indicator.
@@ -64,8 +65,8 @@ Our Philosophy → The Path (expandable) → Testimonials → About Arun → FAQ
 ## Known gaps / next priorities
 1. **Testimonials** — page exists but has placeholder content. Real quotes needed urgently for conversion.
 2. **Production deploy** — update `NEXT_PUBLIC_SITE_URL` to the live domain so og:image and sitemap URLs resolve correctly.
-3. **Instagram** — link removed from footer until an account exists.
-4. **Arun's photo** — current image is a placeholder headshot. Replace `/public/about/arun.png` when a professional photo is ready.
+3. **Arun's photo** — current image is a placeholder headshot. Replace `/public/about/arun.png` when a professional photo is ready.
+4. **Sidebar hover effect** — attempted `hover:text-muted` via Tailwind v4 and plain CSS; both compiled correctly but effect wasn't visible in browser. Reverted. Needs further investigation.
 
 ## Encoding note
 Several page files were corrupted by an early PowerShell operation. All have since been fixed at the byte level. If you ever use PowerShell to modify `.tsx` files, use `[System.IO.File]::ReadAllText` / `WriteAllText` with `[System.Text.UTF8Encoding]::new($false)` (UTF-8 without BOM) to avoid re-introducing corruption.

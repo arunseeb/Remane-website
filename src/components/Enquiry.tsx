@@ -84,7 +84,7 @@ export function Enquiry() {
             Begin your enquiry
           </h2>
           <p className="mt-6 text-center text-sm leading-relaxed text-muted">
-            Entirely private. Each enquiry is considered personally. You will hear back within 24 hours.
+            Entirely private and completely free. Each enquiry is considered personally. You will hear back within 24 hours.
           </p>
           <p className="mt-3 text-center text-xs tracking-[0.15em] text-muted/60 uppercase">
             An investment of £1,000 / month
