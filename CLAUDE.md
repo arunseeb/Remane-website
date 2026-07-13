@@ -63,6 +63,12 @@ Our Philosophy → The Path (expandable) → Testimonials → About Arun → FAQ
 - `.env.local` is gitignored via `.env*` pattern
 - 2 moderate npm vulnerabilities exist in Next.js's internal PostCSS — cannot be fixed without downgrading Next.js to v9. Not a runtime risk.
 
+## Cron schedules (vercel.json)
+Vercel's Hobby plan allows at most **one run per day per cron job**, so both schedules
+must stay daily — an hourly expression makes the deploy fail outright. On Pro,
+`/api/cron/unread-alerts` is better hourly (`0 * * * *`): it reports client messages
+left unanswered for 24h, and a daily run can leave one waiting up to ~48h.
+
 ## Known gaps / next priorities
 1. **Testimonials** — the invented placeholder quotes have been removed (fabricated reviews are a CAP Code / consumer-protection breach on a live site); the page now shows an honest "private by design" interim state. Add real quotes (with written permission) to the `TESTIMONIALS` array in `app/testimonials/page.tsx` and they render automatically.
 2. **Production deploy** — update `NEXT_PUBLIC_SITE_URL` to the live domain so og:image and sitemap URLs resolve correctly.
