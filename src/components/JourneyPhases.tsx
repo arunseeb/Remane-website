@@ -101,7 +101,7 @@ export function JourneyPhases() {
                   </p>
                   <Link
                     href={phase.href}
-                    className="pointer-events-auto mt-5 inline-block rounded-full bg-white px-6 py-2.5 text-xs tracking-[0.15em] text-gold uppercase transition-all duration-300 hover:bg-white/90 md:px-7 md:py-3 md:text-sm"
+                    className="pointer-events-auto mt-5 inline-block rounded-full bg-white px-6 py-2.5 text-xs tracking-[0.15em] text-burgundy uppercase transition-all duration-300 hover:bg-white/90 md:px-7 md:py-3 md:text-sm"
                   >
                     Learn more
                   </Link>
@@ -128,12 +128,17 @@ export function JourneyPhases() {
                   key={phase.title}
                   onClick={() => scrollToPanel(index)}
                   aria-label={`Go to ${phase.title}`}
-                  className={`h-px transition-all duration-500 ${
-                    index === activeIndex
-                      ? "w-10 bg-burgundy"
-                      : "w-6 bg-brown/30 hover:bg-brown/50"
-                  }`}
-                />
+                  className="flex h-6 items-center"
+                >
+                  <span
+                    aria-hidden
+                    className={`h-px transition-all duration-500 ${
+                      index === activeIndex
+                        ? "w-10 bg-burgundy"
+                        : "w-6 bg-brown/30 hover:bg-brown/50"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 

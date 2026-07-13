@@ -7,26 +7,10 @@ export const metadata = {
   description: "Words from men who have walked the path.",
 };
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "Three months in I barely recognised myself — my health, my sleep, the way I was thinking. I came in pretty broken. The guidance was honest, sometimes uncomfortable. It was exactly what I needed.",
-    name: "Private client",
-    detail: "Recovery & Reconstruction",
-  },
-  {
-    quote:
-      "Discretion was everything for me. I didn't want someone who would use my story as a case study. Nothing left the sessions. That trust made all the difference.",
-    name: "Private client",
-    detail: "Re-entry & Relationship Mastery",
-  },
-  {
-    quote:
-      "I came in sceptical. Tried therapy, read the books, worked through the podcasts. This was different — no motivation speeches, no vague advice. Just clear tasks and someone who wouldn't let me off the hook.",
-    name: "Private client",
-    detail: "Full engagement",
-  },
-];
+// Real client words only, added with each man's written permission. While this
+// list is empty the page explains why, rather than showing invented quotes —
+// fabricated testimonials on a live site are a legal risk and a trust risk.
+const TESTIMONIALS: { quote: string; name: string; detail: string }[] = [];
 
 export default function TestimonialsPage() {
   return (
@@ -53,23 +37,36 @@ export default function TestimonialsPage() {
           every client.
         </p>
 
-        <div className="mt-14 space-y-14">
-          {TESTIMONIALS.map((t, i) => (
-            <blockquote key={i} className="border-l border-gold/40 pl-6">
-              <p className="font-display text-2xl leading-snug text-foreground md:text-3xl">
-                &ldquo;{t.quote}&rdquo;
-              </p>
-              <footer className="mt-5">
-                <p className="text-xs tracking-[0.12em] text-burgundy uppercase">
-                  {t.name}
+        {TESTIMONIALS.length > 0 ? (
+          <div className="mt-14 space-y-14">
+            {TESTIMONIALS.map((t, i) => (
+              <blockquote key={i} className="border-l border-gold/40 pl-6">
+                <p className="font-display text-2xl leading-snug text-foreground md:text-3xl">
+                  &ldquo;{t.quote}&rdquo;
                 </p>
-                <p className="mt-1 text-xs tracking-[0.1em] text-muted">
-                  {t.detail}
-                </p>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
+                <footer className="mt-5">
+                  <p className="text-xs tracking-[0.12em] text-burgundy uppercase">
+                    {t.name}
+                  </p>
+                  <p className="mt-1 text-xs tracking-[0.1em] text-muted">
+                    {t.detail}
+                  </p>
+                </footer>
+              </blockquote>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-14 border-l border-gold/40 pl-6">
+            <p className="font-display text-2xl leading-snug text-foreground md:text-3xl">
+              This work is private by design.
+            </p>
+            <p className="mt-5 text-sm leading-relaxed text-muted">
+              Client words appear here only with each man&rsquo;s written
+              permission, and never before. If you would like to understand what
+              the work involves, the most honest way is a conversation.
+            </p>
+          </div>
+        )}
 
         <div className="mt-20">
           <Link

@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Proprietary coaching material and reference reading — never publish with the
+# website. This repo is PUBLIC: anything not listed here is one `git add .` away
+# from being on the internet under your own name.
+/Modules and homework/
+/books/
+*.pdf

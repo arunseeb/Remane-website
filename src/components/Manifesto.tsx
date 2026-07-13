@@ -48,7 +48,7 @@ export function Manifesto() {
               {
                 step: "03",
                 title: "Your path begins",
-                body: "A programme built around your situation. Fortnightly sessions, daily accountability, and clear direction.",
+                body: "A programme built around your situation. Weekly sessions, daily accountability, and clear direction.",
                 icon: (
                   <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 28 C8 28 10 10 18 10 C26 10 28 24 32 24" />
@@ -102,7 +102,7 @@ export function Manifesto() {
           </p>
           <Link
             href="/our-mission"
-            className="rounded-full bg-white px-7 py-2.5 font-sans text-xs tracking-[0.2em] text-gold uppercase transition-opacity duration-300 hover:opacity-80"
+            className="rounded-full bg-white px-7 py-2.5 font-sans text-xs tracking-[0.2em] text-burgundy uppercase transition-opacity duration-300 hover:opacity-80"
           >
             Explore
           </Link>

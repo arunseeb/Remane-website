@@ -32,15 +32,6 @@
   --font-display: var(--font-cormorant);
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
 
 body {
   background: var(--background);
@@ -149,5 +140,18 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .path-track {
     scroll-behavior: auto;
+  }
+}
+
+/* Framer server-renders FadeIn content at opacity 0 and only reveals it on
+   hydration. With scripting disabled that never happens, so entire pages — the
+   /begin funnel is FadeIn top to bottom — would stay permanently blank. Reveal
+   them instead. Deliberately scoped to scripting:none rather than a timer: a
+   timed fallback would also fire during slow hydration, showing the content and
+   then letting framer snap it back to opacity 0 — a visible blink. */
+@media (scripting: none) {
+  .fadein-guard {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

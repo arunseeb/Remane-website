@@ -55,7 +55,9 @@ export function VisualStack() {
               src={slide.src}
               alt={slide.alt}
               fill
-              priority
+              // Only the first slide is the LCP image; preloading all three makes
+              // them compete with fonts and the visible slide on first paint.
+              priority={i === 0}
               className="object-cover"
               sizes="100vw"
             />
@@ -106,10 +108,15 @@ export function VisualStack() {
             key={i}
             onClick={() => setCurrent(i)}
             aria-label={`Go to slide ${i + 1}`}
-            className={`h-px w-8 transition-all duration-500 ${
-              i === current ? "bg-white/80" : "bg-white/30"
-            }`}
-          />
+            className="flex h-6 w-8 items-center"
+          >
+            <span
+              aria-hidden
+              className={`h-px w-full transition-all duration-500 ${
+                i === current ? "bg-white/80" : "bg-white/30"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </section>

@@ -1,95 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 export const dynamic = "force-dynamic";
 
 const MAX_QUERY_LENGTH = 100;
 
-interface PageEntry {
-  label: string;
-  href: string;
-}
-
-// Cache the page list for the lifetime of the server process
-let cachedPages: PageEntry[] | null = null;
-
-function pathToLabel(routePath: string): string {
-  const last = routePath.split("/").filter(Boolean).pop() ?? "";
-  return last
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-}
-
-function extractLabel(filePath: string, routePath: string): string {
-  try {
-    const content = fs.readFileSync(filePath, "utf-8");
-    const match = content.match(/title:\s*["']([^"']+)["']/);
-    if (match) {
-      let title = match[1].split(" — ")[0].trim();
-      title = title.replace(/^Phase\s+[IVX]+:\s*/i, "").trim();
-      return title;
-    }
-  } catch {
-    // fall through
-  }
-  return pathToLabel(routePath);
-}
-
-function scanPages(dir: string, routeBase = ""): PageEntry[] {
-  const results: PageEntry[] = [];
-
-  let entries: fs.Dirent[];
-  try {
-    entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return results;
-  }
-
-  for (const entry of entries) {
-    if (
-      entry.name.startsWith(".") ||
-      entry.name.startsWith("_") ||
-      entry.name.startsWith("(") ||
-      entry.name === "api" ||
-      entry.name === "node_modules"
-    )
-      continue;
-
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      results.push(...scanPages(fullPath, `${routeBase}/${entry.name}`));
-    } else if (/^page\.(tsx?|jsx?)$/.test(entry.name)) {
-      if (!routeBase) continue;
-      results.push({
-        label: extractLabel(fullPath, routeBase),
-        href: routeBase,
-      });
-    }
-  }
-
-  return results;
-}
+// The public pages, by hand. A previous version scanned src/app with fs at request
+// time, which only works in `next dev` — deployed servers don't ship the source tree,
+// so production search silently returned nothing. Keep this list in step with
+// src/app/sitemap.ts when pages are added. /begin (unlisted funnel), the portal and
+// auth pages are deliberately absent.
+const PAGES = [
+  { label: "Home", href: "/" },
+  { label: "Our Philosophy", href: "/our-mission" },
+  { label: "About the Founder", href: "/about" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Enquire", href: "/enquire" },
+  { label: "Recovery", href: "/path/recovery" },
+  { label: "Reconstruction", href: "/path/reconstruction" },
+  { label: "Re-entry", href: "/path/re-entry" },
+  { label: "Relationship Mastery", href: "/path/relationship-mastery" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms & Conditions", href: "/terms" },
+];
 
 export async function GET(request: NextRequest) {
   const raw = request.nextUrl.searchParams.get("q") ?? "";
 
-  // Reject oversized queries
   if (raw.length > MAX_QUERY_LENGTH) {
     return NextResponse.json([], { status: 400 });
   }
 
   const q = raw.toLowerCase().trim();
-
   if (!q) return NextResponse.json([]);
 
-  if (!cachedPages) {
-    cachedPages = scanPages(path.join(process.cwd(), "src", "app"));
-  }
-
-  const filtered = cachedPages.filter((p) =>
+  const filtered = PAGES.filter((p) =>
     p.label.toLowerCase().split(/\s+/).some((word) => word.startsWith(q))
   );
 

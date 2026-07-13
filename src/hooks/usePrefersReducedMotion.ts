@@ -12,10 +12,15 @@ function getSnapshot() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function getServerSnapshot() {
-  return true;
-}
-
-export function usePrefersReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+/**
+ * SSR-safe prefers-reduced-motion.
+ *
+ * `serverDefault` is what the server (and the hydration render) assumes:
+ * - true  → render the still variant first; motion attaches after hydration.
+ * - false → render the animated variant first; reduced-motion users get the
+ *           still variant right after hydration. Use this when the animated
+ *           variant is the one whose server HTML must match (e.g. FadeIn).
+ */
+export function usePrefersReducedMotion(serverDefault = true) {
+  return useSyncExternalStore(subscribe, getSnapshot, () => serverDefault);
 }

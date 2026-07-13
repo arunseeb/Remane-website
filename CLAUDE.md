@@ -33,6 +33,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000   # set to production domain on deplo
 | `/testimonials` | `app/testimonials/page.tsx` | Currently placeholder — replace with real quotes ASAP |
 | `/faq` | `app/faq/page.tsx` | 4 sections, full copy already written |
 | `/enquire` | `app/enquire/page.tsx` | Standalone enquiry page with back link |
+| `/begin` | `app/begin/page.tsx` | VSL sales funnel — standalone (no Header/Footer), noindex, off sitemap. VSL script in `VSL-SCRIPT.md`; set video ID in `components/funnel/Vsl.tsx` once recorded. Qualifying form (`components/funnel/BeginForm.tsx`) posts to Formspree with UTM/referrer capture, then shows Calendly. Testimonials section hidden until `TESTIMONIALS` array in page is filled with real quotes. |
 | `/path/recovery` | `app/path/recovery/page.tsx` | Phase I |
 | `/path/reconstruction` | `app/path/reconstruction/page.tsx` | Phase II |
 | `/path/re-entry` | `app/path/re-entry/page.tsx` | Phase III |
@@ -43,7 +44,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000   # set to production domain on deplo
 
 ## Key components
 - **`Header.tsx`** — Fixed navbar with hamburger drawer. Hamburger is a standalone `fixed` element at `z-[70]` (above drawer at `z-[65]`, above header at `z-[60]`). Logo shows when `atTop` or `menuOpen`. Nav links (The Path, Enquire) disappear when menu opens. Active page highlighted in burgundy via `usePathname`.
-- **`Enquiry.tsx`** — Posts directly to Formspree (`NEXT_PUBLIC_FORMSPREE_ID`) as JSON with `Accept: application/json`. On success shows Calendly `InlineWidget` → on `calendly.event_scheduled` postMessage shows thank you. Has honeypot field (`_gotcha`). Calendly has loading skeleton until `calendly.profile_page_viewed` fires. Note: `/api/enquire` (Resend-based route) still exists in the codebase but is unused.
+- **`Enquiry.tsx`** — Posts directly to Formspree (`NEXT_PUBLIC_FORMSPREE_ID`) as JSON with `Accept: application/json`. On success shows Calendly `InlineWidget` → on `calendly.event_scheduled` postMessage shows thank you. Has honeypot field (`_gotcha`). Calendly has loading skeleton until `calendly.profile_page_viewed` fires. (The old unused `/api/enquire` Resend route has been deleted — it was an unauthenticated email relay with an HTML-injection hole.)
 - **`Footer.tsx`** — Social icons for Instagram (`remaneofficial`), Facebook (`61590226217685`), YouTube (`@RemaneOfficial`). Icons are inline SVG, muted by default, burgundy on hover.
 - **`VisualStack.tsx`** — Hero slideshow with Ken Burns effect. Height is `calc(100svh - 9rem)` with `mt-36` to clear the navbar.
 - **`Manifesto.tsx`** — "How it works" 3-step section + full-screen Philosophy panel + JourneyPhases scroll.
@@ -55,7 +56,7 @@ Our Philosophy → The Path (expandable) → Testimonials → About Arun → FAQ
 ## Security
 - HTTP security headers set in `next.config.ts` (CSP, HSTS, X-Frame-Options, Permissions-Policy, Referrer-Policy)
 - CSP explicitly allows Formspree and Calendly
-- Search API (`/api/search`) has 100-char query cap and in-process cache
+- Search API (`/api/search`) serves a hardcoded list of public pages (100-char query cap). Keep the list in step with `sitemap.ts` — it must NOT scan the filesystem, which breaks on deployed servers
 - Honeypot on enquiry form
 - `robots.ts` blocks `/api/`
 - `sitemap.ts` lists all 12 public pages
@@ -63,7 +64,7 @@ Our Philosophy → The Path (expandable) → Testimonials → About Arun → FAQ
 - 2 moderate npm vulnerabilities exist in Next.js's internal PostCSS — cannot be fixed without downgrading Next.js to v9. Not a runtime risk.
 
 ## Known gaps / next priorities
-1. **Testimonials** — page exists but has placeholder content. Real quotes needed urgently for conversion.
+1. **Testimonials** — the invented placeholder quotes have been removed (fabricated reviews are a CAP Code / consumer-protection breach on a live site); the page now shows an honest "private by design" interim state. Add real quotes (with written permission) to the `TESTIMONIALS` array in `app/testimonials/page.tsx` and they render automatically.
 2. **Production deploy** — update `NEXT_PUBLIC_SITE_URL` to the live domain so og:image and sitemap URLs resolve correctly.
 3. **Arun's photo** — current image is a placeholder headshot. Replace `/public/about/arun.png` when a professional photo is ready.
 4. **Sidebar hover effect** — attempted `hover:text-muted` via Tailwind v4 and plain CSS; both compiled correctly but effect wasn't visible in browser. Reverted. Needs further investigation.

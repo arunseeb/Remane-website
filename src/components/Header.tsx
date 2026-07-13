@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MENU_ITEMS, NAV_ITEMS, PHASES } from "@/lib/constants";
 import { useHeaderState } from "@/hooks/useHeaderState";
@@ -22,6 +22,8 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Monotonic id so a slow response for an old query can't overwrite newer results.
+  const searchSeqRef = useRef(0);
 
   const closeAll = () => {
     setMenuOpen(false);
@@ -45,6 +47,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
     const q = e.target.value;
     setSearchQuery(q);
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    const seq = ++searchSeqRef.current;
     if (!q.trim()) {
       setSearchResults([]);
       setSearching(false);
@@ -55,14 +58,32 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
         const data: SearchResult[] = await res.json();
+        if (seq !== searchSeqRef.current) return; // a newer query superseded this one
         setSearchResults(data);
       } catch {
+        if (seq !== searchSeqRef.current) return;
         setSearchResults([]);
       } finally {
-        setSearching(false);
+        if (seq === searchSeqRef.current) setSearching(false);
       }
     }, 120);
   }
+
+  // Escape closes the drawer and search from anywhere; clear any pending search on unmount.
+  useEffect(() => {
+    if (!menuOpen && !searchOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeAll();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen, searchOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const hasBg = true;
   const showLogo = atTop || searchOpen || menuOpen;
@@ -98,7 +119,9 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
         </button>
       )}
 
-      {/* Left drawer — expands to double width when "The Path" is hovered */}
+      {/* Left drawer — expands to double width when "The Path" is hovered.
+          inert removes the off-screen links from the tab order and from screen
+          readers; aria-hidden alone leaves them keyboard-focusable. */}
       <div
         className="fixed top-0 left-0 z-[65] h-full bg-background shadow-2xl flex flex-row overflow-hidden transition-all duration-500"
         style={{
@@ -106,7 +129,7 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
           width: pathHovered ? "min(36rem, 100vw)" : "min(18rem, 85vw)",
           transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
-        aria-hidden={!menuOpen}
+        inert={!menuOpen}
         onMouseLeave={() => setPathHovered(false)}
       >
         {/* Left panel — primary menu or mobile path sub-menu */}
@@ -145,10 +168,13 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
               {MENU_ITEMS[0].label}
             </Link>
 
-            {/* The Path — hover reveals right panel on desktop; tap toggles inline sub-menu on mobile */}
+            {/* The Path — hover reveals right panel on desktop; tap opens inline sub-menu
+                on mobile. Open (not toggle) on click: touch browsers fire mouseenter then
+                click on the first tap, and a toggle would open-then-instantly-close. */}
             <button
               onMouseEnter={() => setPathHovered(true)}
-              onClick={() => setPathHovered((prev) => !prev)}
+              onClick={() => setPathHovered(true)}
+              aria-expanded={pathHovered}
               className={`flex items-center gap-3 text-left font-display text-3xl transition-colors duration-300 hover:text-muted ${pathname.startsWith("/path") ? "text-burgundy" : "text-foreground"}`}
             >
               The Path
@@ -306,10 +332,10 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                 autoFocus
                 type="text"
                 placeholder="Search pages…"
+                aria-label="Search pages"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="flex-1 bg-transparent border-b border-brown/30 pb-2 text-foreground placeholder:text-muted/50 focus:border-burgundy focus:outline-none text-base md:text-sm tracking-wide"
-                onKeyDown={(e) => e.key === "Escape" && closeAll()}
               />
             </div>
 
@@ -320,9 +346,9 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                   {searching ? (
                     <p className="py-4 text-xs tracking-wide text-muted">Searching…</p>
                   ) : searchResults.length > 0 ? (
-                    <ul role="listbox">
+                    <ul>
                       {searchResults.map((result) => (
-                        <li key={result.href} role="option">
+                        <li key={result.href}>
                           <Link
                             href={result.href}
                             onClick={closeAll}

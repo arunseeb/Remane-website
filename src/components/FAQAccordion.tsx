@@ -17,13 +17,16 @@ export function FAQAccordion({ sections }: { sections: FAQSection[] }) {
             {section.heading}
           </p>
           <div>
-            {section.items.map((item) => {
+            {section.items.map((item, itemIndex) => {
               const id = `${section.heading}::${item.q}`;
               const isOpen = open === id;
+              const panelId = `faq-${section.heading.replace(/\W+/g, "-")}-${itemIndex}`;
               return (
                 <div key={item.q} className="border-t border-brown/10">
                   <button
                     onClick={() => setOpen(isOpen ? null : id)}
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
                     className="flex w-full items-center justify-between py-6 text-left"
                   >
                     <span className="font-display text-xl text-foreground pr-8">
@@ -47,6 +50,7 @@ export function FAQAccordion({ sections }: { sections: FAQSection[] }) {
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
+                        id={panelId}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}

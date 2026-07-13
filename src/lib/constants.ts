@@ -1,12 +1,12 @@
 export const NAV_ITEMS = [
-  { label: "The Path", href: "#path" },
+  { label: "Login", href: "/login" },
   { label: "Enquire", href: "#enquire" },
 ] as const;
 
 export const MENU_ITEMS = [
   { label: "Our Philosophy", href: "/our-mission" },
   { label: "Testimonials", href: "/testimonials" },
-  { label: "About Arun", href: "/about" },
+  { label: "About the Founder", href: "/about" },
   { label: "FAQ", href: "/faq" },
   { label: "Enquire", href: "/enquire" },
 ] as const;

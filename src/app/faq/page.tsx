@@ -47,11 +47,11 @@ const SECTIONS = [
     items: [
       {
         q: "How does the programme work?",
-        a: "We begin with an interview and assessment.\n\nFrom there, we determine which of the four sections you actually need: Recovery, Reconstruction, Re-entry, and Romantic Mastery.\n\nThere is no point teaching you what you already know. The process is personalised around your actual situation.\n\nYou will have a Zoom session every two weeks. In that session, we review your current situation, identify what needs to change, and set specific tasks for the next two weeks.\n\nBetween sessions, you receive daily accountability through WhatsApp, with support, insight, and direction when you get stuck.",
+        a: "We begin with an interview and assessment.\n\nFrom there, we determine which of the four sections you actually need: Recovery, Reconstruction, Re-entry, and Relationship Mastery.\n\nThere is no point teaching you what you already know. The process is personalised around your actual situation.\n\nYou will have a Zoom session every week. In that session, we review your current situation, identify what needs to change, and set specific tasks for the week ahead.\n\nBetween sessions, you receive daily accountability through WhatsApp, with support, insight, and direction when you get stuck.",
       },
       {
-        q: "What does a typical two weeks look like?",
-        a: "A typical cycle includes:\n\n• One deep coaching call\n• Personalised feedback\n• 3–5 clear tasks\n• Homework based on your exact issues\n• Relevant material to read or study\n• Daily accountability\n• Additional guidance if your situation changes\n\nIf something major happens and the plan needs to be reworked, an extra call may be scheduled.",
+        q: "What does a typical week look like?",
+        a: "A typical week includes:\n\n• One deep coaching call\n• Personalised feedback\n• 3–5 clear tasks\n• Homework based on your exact issues\n• Relevant material to read or study\n• Daily accountability\n• Additional guidance if your situation changes\n\nIf something major happens and the plan needs to be reworked, an extra call may be scheduled.",
       },
       {
         q: "How long does the programme take?",
@@ -92,7 +92,7 @@ const SECTIONS = [
       },
       {
         q: "What if I do not have time?",
-        a: "The core commitment is one Zoom call every two weeks, plus the daily work required to change your life.\n\nIf you do not have time to work on the biggest pain in your life, the issue is not time. It is priority.",
+        a: "The core commitment is one Zoom call each week, plus the daily work required to change your life.\n\nIf you do not have time to work on the biggest pain in your life, the issue is not time. It is priority.",
       },
       {
         q: "What if I fail?",

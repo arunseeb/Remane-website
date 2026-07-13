@@ -42,8 +42,17 @@ export function Enquiry() {
     const form = e.currentTarget;
     const els = form.elements;
 
+    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+    if (!formspreeId) {
+      // Otherwise this posts to formspree.io/f/undefined and the lead is lost.
+      console.error("NEXT_PUBLIC_FORMSPREE_ID is not set");
+      setErrorDetail("The form is not configured.");
+      setStatus("error");
+      return;
+    }
+
     try {
-      const res = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ID}`, {
+      const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -51,6 +60,8 @@ export function Enquiry() {
           email:   (els.namedItem("email")   as HTMLInputElement).value,
           phone:   (els.namedItem("phone")   as HTMLInputElement).value,
           message: (els.namedItem("message") as HTMLTextAreaElement).value,
+          // A record that the privacy policy was accepted, for the GDPR trail
+          privacy_consent: (els.namedItem("privacy") as HTMLInputElement).checked,
           _gotcha: (els.namedItem("_gotcha") as HTMLInputElement).value,
         }),
       });
@@ -94,7 +105,7 @@ export function Enquiry() {
         <FadeIn delay={0.12}>
           {status === "booked" ? (
             <p className="mt-14 text-center font-display text-xl text-foreground">
-              Thank you. We will be in touch if there is a fit.
+              Thank you — your call is booked. A confirmation is on its way to your inbox.
             </p>
           ) : status === "success" ? (
             <div className="mt-14">
@@ -197,7 +208,7 @@ export function Enquiry() {
 
               {status === "error" && (
                 <p className="text-center text-sm text-burgundy">
-                  Something went wrong. Please try again or contact us directly.
+                  Something went wrong. Please try again in a moment.
                   {errorDetail && (
                     <span className="mt-1 block text-xs opacity-60">{errorDetail}</span>
                   )}

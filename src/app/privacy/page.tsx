@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata = {
   title: "Privacy Policy — Remane",
@@ -34,9 +35,12 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display text-xl text-foreground">Data we collect</h2>
             <p className="mt-3">
-              When you submit an enquiry, we collect your name, email address, and
-              the message you provide. We do not use aggressive tracking or sell
-              your data.
+              When you submit an enquiry or application, we collect your name,
+              email address, phone number, and the answers you provide (including,
+              on our application form, your situation and readiness to invest). To
+              understand where applications come from, that form also records the
+              page that referred you and any campaign tags in the link you
+              followed. We do not use aggressive tracking or sell your data.
             </p>
           </section>
 
@@ -63,8 +67,14 @@ export default function PrivacyPage() {
             <p className="mt-3">
               Under UK GDPR you have the right to access, rectify, erase, restrict,
               or object to processing of your personal data, and to lodge a
-              complaint with the ICO. Contact us via the enquiry form on our
-              website.
+              complaint with the ICO. To exercise any of these rights, email{" "}
+              <a
+                href="mailto:remaneofficial@gmail.com"
+                className="link-underline text-burgundy"
+              >
+                remaneofficial@gmail.com
+              </a>
+              .
             </p>
           </section>
 
@@ -72,13 +82,15 @@ export default function PrivacyPage() {
             <h2 className="font-display text-xl text-foreground">Third parties</h2>
             <p className="mt-3">
               Form submissions may be processed by Formspree (or a similar provider)
-              to deliver your message securely. Their privacy policy applies to
-              that processing.
+              to deliver your message securely, and call bookings are handled by
+              Calendly. Each provider&rsquo;s own privacy policy applies to that
+              processing.
             </p>
           </section>
         </div>
       </div>
     </div>
+      <Footer />
     </>
   );
 }

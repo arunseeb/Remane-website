@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata = {
   title: "Terms & Conditions — Remane",
@@ -249,14 +250,21 @@ export default function TermsPage() {
             <section>
               <h2 className="font-display text-xl text-foreground">17. Contact</h2>
               <p className="mt-3">
-                For questions regarding these Terms &amp; Conditions, please contact us through
-                the contact details provided on this website.
+                For questions regarding these Terms &amp; Conditions, email{" "}
+                <a
+                  href="mailto:remaneofficial@gmail.com"
+                  className="link-underline text-burgundy"
+                >
+                  remaneofficial@gmail.com
+                </a>
+                .
               </p>
             </section>
 
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

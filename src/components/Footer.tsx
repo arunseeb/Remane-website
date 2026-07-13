@@ -36,6 +36,13 @@ export function Footer() {
           </a>
         </div>
 
+        <a
+          href="mailto:remaneofficial@gmail.com"
+          className="link-underline text-xs tracking-[0.12em] text-muted hover:text-burgundy"
+        >
+          remaneofficial@gmail.com
+        </a>
+
         <p className="text-xs tracking-[0.12em] text-muted">
           © {new Date().getFullYear()} Remane. Trading as Remane.
         </p>
@@ -64,6 +71,9 @@ export function Footer() {
           </Link>
           <Link href="/terms" className="link-underline hover:text-burgundy">
             Terms
+          </Link>
+          <Link href="/login" className="link-underline hover:text-burgundy">
+            Client login
           </Link>
         </div>
       </div>

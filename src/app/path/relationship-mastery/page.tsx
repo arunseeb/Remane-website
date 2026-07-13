@@ -1,11 +1,56 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import {
+  PhasePosition,
+  MovementTimeline,
+  Outcomes,
+  type Movement,
+} from "@/components/PhaseOverview";
 
 export const metadata = {
   title: "Phase IV: Relationship Mastery — Remane",
   description: "Devotion, care, and love done well. The fourth phase of the Remane path.",
 };
+
+const movements: Movement[] = [
+  {
+    weeks: "Weeks 1–3",
+    title: "Understanding the past",
+    description:
+      "An honest post-mortem of the marriage — the real dynamics beneath the surface story, without blame in either direction. Then the deeper machinery: how your attachment style shapes the way you love, and the patterns that connect every relationship you've had.",
+    themes: ["The honest autopsy", "Attachment style", "Recurring patterns"],
+  },
+  {
+    weeks: "Weeks 4–7",
+    title: "The emotional skillset",
+    description:
+      "The skills most men were never taught. Naming and expressing what you feel instead of acting it out. Listening to understand rather than to fix. Conflict handled as repair, not victory. And vulnerability rebuilt — carefully — after a divorce made it feel dangerous.",
+    themes: ["Feeling, named", "Real listening", "Repair", "Vulnerability"],
+  },
+  {
+    weeks: "Weeks 8–9",
+    title: "Standing grounded",
+    description:
+      "Steadiness a partner can lean on — presence and direction without dominance, warmth without self-abandonment. Boundaries and standards held calmly: the difference between walls that shut people out and lines that protect what matters.",
+    themes: ["Grounded presence", "Boundaries, not walls", "Standards"],
+  },
+  {
+    weeks: "Weeks 10–12",
+    title: "Choosing and sustaining",
+    description:
+      "Compatibility over chemistry — because intense spark is often an old pattern calling. Then the long game: the habits that keep a relationship alive across years, and catching drift early instead of watching love erode on autopilot.",
+    themes: ["Choosing well", "Sustaining love", "Graduation"],
+  },
+];
+
+const outcomes = [
+  "A plain understanding of why the marriage ended — and your part in it.",
+  "The emotional skills most men were never taught.",
+  "Conflict handled as repair, not victory.",
+  "Standards held with warmth, not walls.",
+  "The judgement to choose well, and the habits to sustain love for the long haul.",
+];
 
 export default function RelationshipMasteryPage() {
   return (
@@ -20,7 +65,11 @@ export default function RelationshipMasteryPage() {
           ← Remane
         </Link>
 
-        <p className="mt-12 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase IV</p>
+        <div className="mt-12">
+          <PhasePosition current={3} />
+        </div>
+
+        <p className="mt-14 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase IV</p>
         <h1 className="mt-2 font-display text-5xl text-foreground md:text-6xl">
           Relationship Mastery
         </h1>
@@ -30,33 +79,27 @@ export default function RelationshipMasteryPage() {
           Devotion, care, and love done well.
         </p>
 
-        <div className="mt-10 space-y-6 text-base leading-relaxed text-muted">
+        <div className="mt-8 space-y-6 text-base leading-relaxed text-muted">
           <p>
-            Most men are not taught how to love well. They are taught to
-            provide, to protect, to persist. These are not nothing. But they
-            are not enough, and most men know it — often too late, and
-            usually through loss.
+            A man can heal, rebuild himself, and date confidently — and still
+            walk straight back into the same relationship that broke him,
+            just with a different face. This phase exists to prevent exactly
+            that. It is for the man in a relationship, or approaching one,
+            who wants to do it properly: with depth, consistency, and the
+            kind of care that makes a partnership a refuge.
           </p>
           <p>
-            Phase IV is for the man who is in a relationship, or approaching
-            one, and wants to do it properly. Not perfectly — that is not the
-            aim. But with depth, consistency, and the kind of care that makes
-            a partnership feel like a refuge rather than an obligation.
+            Twelve weeks, one session and one piece of fieldwork each week.
+            This page is the map, not the course.
           </p>
-          <p>
-            We look at how a man shows up day to day. How he handles conflict
-            — not the dramatic moments, but the small frictions that erode
-            trust over time if mishandled. How he maintains his sense of self
-            while being genuinely devoted to another person. How he sustains
-            attraction, connection, and mutual respect across years, not just
-            months.
-          </p>
-          <p>
-            This is the phase most men want to reach quickly. The honest
-            answer is that it requires everything that comes before it. A man
-            who has done the recovery, the reconstruction, and the re-entry
-            work arrives here with something real to offer.
-          </p>
+        </div>
+
+        <div className="mt-14">
+          <MovementTimeline movements={movements} />
+        </div>
+
+        <div className="mt-16 border-t border-gold/30 pt-12">
+          <Outcomes items={outcomes} />
         </div>
 
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
@@ -79,4 +122,3 @@ export default function RelationshipMasteryPage() {
     </>
   );
 }
-
