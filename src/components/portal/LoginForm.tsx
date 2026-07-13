@@ -59,13 +59,28 @@ export function LoginForm() {
       return;
     }
     setError(null);
+    setNotice(null);
     setBusy(true);
     const supabase = createClient();
-    await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback`,
     });
-    setNotice("If that email has an account, a reset link is on its way.");
     setBusy(false);
+    if (error) {
+      // Never claim the mail is on its way when it isn't — Supabase rate-limits
+      // password resets, and a false "check your inbox" leaves the user waiting
+      // for an email that will never arrive.
+      setError(
+        error.status === 429
+          ? "Too many reset requests. Wait a few minutes and try again."
+          : `Could not send the reset email: ${error.message}`
+      );
+      return;
+    }
+    // Deliberately does not confirm whether the address has an account.
+    setNotice(
+      "If that email has an account, a reset link is on its way. It expires in 24 hours — check your spam folder."
+    );
   }
 
   const inputClass =
