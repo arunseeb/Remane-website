@@ -305,6 +305,34 @@ export function Header({ hideDesktopNav = false }: { hideDesktopNav?: boolean })
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </button>
+
+                {/* Client login. The "Login" text link above only shows on desktop, and
+                    not at all on pages that pass hideDesktopNav — so without this a
+                    client on a phone could only reach the portal via the footer. Shown
+                    exactly when that text link isn't: same size, stroke and colour as
+                    the search icon, so the two read as one set rather than a new button. */}
+                <Link
+                  href="/login"
+                  aria-label="Client login"
+                  title="Client login"
+                  className={`p-1 text-burgundy transition-opacity hover:opacity-70 ${
+                    hideDesktopNav ? "" : "md:hidden"
+                  }`}
+                >
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.25"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="8" r="3.5" />
+                    <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+                  </svg>
+                </Link>
               </>
             ) : null}
           </div>
