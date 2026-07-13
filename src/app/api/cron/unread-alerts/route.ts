@@ -25,10 +25,19 @@ export async function GET(request: NextRequest) {
 
   const admin = createAdminClient();
 
-  const { data: coaches } = await admin
+  const { data: coaches, error: coachError } = await admin
     .from("profiles")
     .select("id")
     .eq("role", "coach");
+  // Distinguish "the query failed" from "there genuinely is no coach". Reporting a
+  // failed admin query as `no coach` is what hid a bad SUPABASE_SECRET_KEY in
+  // production — every admin-key feature was dead and this route still said ok.
+  if (coachError) {
+    return NextResponse.json(
+      { error: `Could not read profiles: ${coachError.message}` },
+      { status: 500 }
+    );
+  }
   if (!coaches || coaches.length === 0) {
     return NextResponse.json({ ok: true, alerted: 0, reason: "no coach" });
   }

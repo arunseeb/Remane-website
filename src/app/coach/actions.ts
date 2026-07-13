@@ -82,9 +82,17 @@ export async function addClient(
   return { ok: true, error: null };
 }
 
-export async function removeClient(clientId: string) {
+export type RemoveClientState = { ok: boolean; error: string | null };
+
+export async function removeClient(clientId: string): Promise<RemoveClientState> {
   await requireCoach();
-  const admin = createAdminClient();
+
+  let admin;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { ok: false, error: "SUPABASE_SECRET_KEY is missing on the server." };
+  }
 
   // Delete the client's DM rooms (memberships alone would cascade, leaving empty rooms)
   const { data: memberships } = await admin
@@ -97,8 +105,13 @@ export async function removeClient(clientId: string) {
     await admin.from("rooms").delete().in("id", dmRoomIds);
   }
 
-  await admin.auth.admin.deleteUser(clientId);
+  // Report the failure rather than swallowing it: a wrong secret key silently
+  // turned this whole action into a no-op button for days.
+  const { error } = await admin.auth.admin.deleteUser(clientId);
+  if (error) return { ok: false, error: error.message };
+
   revalidatePath("/coach", "layout");
+  return { ok: true, error: null };
 }
 
 // ---------- Phases & sessions ----------

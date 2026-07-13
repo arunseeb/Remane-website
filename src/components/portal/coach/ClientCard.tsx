@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { removeClient } from "@/app/coach/actions";
 import { formatDate, type Profile } from "@/lib/portal";
 
 export function ClientCard({ client }: { client: Profile }) {
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function handleRemoveClient() {
     if (
@@ -14,7 +15,10 @@ export function ClientCard({ client }: { client: Profile }) {
         `Remove ${client.full_name || client.email}? This deletes their account, homework and messages permanently.`
       )
     ) {
-      startTransition(() => removeClient(client.id));
+      startTransition(async () => {
+        const result = await removeClient(client.id);
+        setError(result.ok ? null : `Could not remove: ${result.error ?? "unknown error"}`);
+      });
     }
   }
 
@@ -57,10 +61,11 @@ export function ClientCard({ client }: { client: Profile }) {
               disabled={pending}
               className="text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-burgundy"
             >
-              Remove
+              {pending ? "Removing…" : "Remove"}
             </button>
           </div>
         </div>
+        {error && <p className="mt-3 text-sm text-burgundy">{error}</p>}
       </div>
     </details>
   );
