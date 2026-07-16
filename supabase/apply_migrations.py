@@ -17,6 +17,8 @@ MIGRATIONS = [
     "migration-005-sessions.sql",
     "migration-006-session-details.sql",
     "migration-007-note-stage-week.sql",
+    "migration-008-security-hardening.sql",
+    "migration-009-reforge-phase.sql",
 ]
 
 VERIFY_TABLES = [

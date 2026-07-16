@@ -17,6 +17,7 @@ const PAGES = [
   { label: "FAQ", href: "/faq" },
   { label: "Enquire", href: "/enquire" },
   { label: "Recovery", href: "/path/recovery" },
+  { label: "Reforge", href: "/path/reforge" },
   { label: "Reconstruction", href: "/path/reconstruction" },
   { label: "Re-entry", href: "/path/re-entry" },
   { label: "Relationship Mastery", href: "/path/relationship-mastery" },

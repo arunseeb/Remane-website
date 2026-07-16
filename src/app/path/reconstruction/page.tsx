@@ -9,8 +9,8 @@ import {
 } from "@/components/PhaseOverview";
 
 export const metadata = {
-  title: "Phase II: Reconstruction — Remane",
-  description: "Body, style, and social presence — refined. The second phase of the Remane path.",
+  title: "Phase III: Reconstruction — Remane",
+  description: "Body, style, and social presence — refined. The third phase of the Remane path.",
 };
 
 const movements: Movement[] = [
@@ -87,10 +87,10 @@ export default function ReconstructionPage() {
         </Link>
 
         <div className="mt-12">
-          <PhasePosition current={1} />
+          <PhasePosition current={2} />
         </div>
 
-        <p className="mt-14 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase II</p>
+        <p className="mt-14 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase III</p>
         <h1 className="mt-2 font-display text-5xl text-foreground md:text-6xl">Reconstruction</h1>
         <div className="mt-3 h-px w-10 bg-gold" />
 
@@ -126,16 +126,16 @@ export default function ReconstructionPage() {
 
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
           <Link
-            href="/path/recovery"
+            href="/path/reforge"
             className="text-xs tracking-[0.2em] text-muted uppercase transition-opacity hover:opacity-70"
           >
-            ← Phase I: Recovery
+            ← Phase II: Reforge
           </Link>
           <Link
             href="/path/re-entry"
             className="text-xs tracking-[0.2em] text-burgundy uppercase transition-opacity hover:opacity-70"
           >
-            Phase III: Re-entry →
+            Phase IV: Re-entry →
           </Link>
           <Link
             href="/enquire"

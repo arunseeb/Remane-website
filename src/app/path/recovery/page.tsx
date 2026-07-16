@@ -101,10 +101,10 @@ export default function RecoveryPage() {
 
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
           <Link
-            href="/path/reconstruction"
+            href="/path/reforge"
             className="text-xs tracking-[0.2em] text-burgundy uppercase transition-opacity hover:opacity-70"
           >
-            Phase II: Reconstruction →
+            Phase II: Reforge →
           </Link>
           <Link
             href="/enquire"

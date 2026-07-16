@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/faq`,                        priority: 0.7 },
     { url: `${base}/enquire`,                    priority: 0.9 },
     { url: `${base}/path/recovery`,              priority: 0.7 },
+    { url: `${base}/path/reforge`,               priority: 0.7 },
     { url: `${base}/path/reconstruction`,        priority: 0.7 },
     { url: `${base}/path/re-entry`,              priority: 0.7 },
     { url: `${base}/path/relationship-mastery`,  priority: 0.7 },

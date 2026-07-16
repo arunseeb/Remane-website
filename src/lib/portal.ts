@@ -1,5 +1,6 @@
 export const PHASE_KEYS = [
   "recovery",
+  "reforge",
   "reconstruction",
   "re-entry",
   "relationship-mastery",
@@ -9,6 +10,7 @@ export type PhaseKey = (typeof PHASE_KEYS)[number];
 
 export const PHASE_LABELS: Record<PhaseKey, string> = {
   recovery: "Recovery",
+  reforge: "Reforge",
   reconstruction: "Reconstruction",
   "re-entry": "Re-entry",
   "relationship-mastery": "Relationship Mastery",
@@ -16,9 +18,10 @@ export const PHASE_LABELS: Record<PhaseKey, string> = {
 
 export const PHASE_NUMERALS: Record<PhaseKey, string> = {
   recovery: "I",
-  reconstruction: "II",
-  "re-entry": "III",
-  "relationship-mastery": "IV",
+  reforge: "II",
+  reconstruction: "III",
+  "re-entry": "IV",
+  "relationship-mastery": "V",
 };
 
 export type Profile = {
@@ -38,7 +41,7 @@ export type ClientPhase = {
   started_at: string;
 };
 
-/** Canonical stage order: I Recovery → II Reconstruction → III Re-entry → IV Mastery. */
+/** Canonical stage order: I Recovery → II Reforge → III Reconstruction → IV Re-entry → V Mastery. */
 export function sortPhases<T extends { phase: PhaseKey }>(phases: T[]): T[] {
   return [...phases].sort(
     (a, b) => PHASE_KEYS.indexOf(a.phase) - PHASE_KEYS.indexOf(b.phase)

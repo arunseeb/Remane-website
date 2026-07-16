@@ -39,16 +39,21 @@ const STAGES = [
   },
   {
     numeral: "II",
-    name: "Reconstruction",
-    line: "Build the man, not the armour. Identity, standards, habits, finances, friendships — who you are now, decided deliberately.",
+    name: "Reforge",
+    line: "Forge the inner man. Self-concept, beliefs, values, standards and the mentalities to meet the world — decided deliberately, before a single outer thing is rebuilt.",
   },
   {
     numeral: "III",
+    name: "Reconstruction",
+    line: "Rebuild the outer life on that foundation. Body, grooming, style, presence, home and a social world — until the man in the mirror is one you respect.",
+  },
+  {
+    numeral: "IV",
     name: "Re-entry",
     line: "The world again. Social confidence, and meeting women with discernment — knowing your ideal partner and your boundaries before you need them.",
   },
   {
-    numeral: "IV",
+    numeral: "V",
     name: "Relationship mastery",
     line: "Become capable of the relationship you actually want next — and never again outsource your worth to it.",
   },
@@ -77,11 +82,11 @@ const OBJECTIONS = [
   },
   {
     q: "Is Arun actually qualified to help me?",
-    a: "Arun rebuilt from his own divorce — without a map, the long way — and turned what he learned into a written, week-by-week curriculum across four stages. This isn’t improvised advice; every week of the path has a purpose and a piece of work behind it.",
+    a: "Arun rebuilt from his own divorce — without a map, the long way — and turned what he learned into a written, week-by-week curriculum across five stages. This isn’t improvised advice; every week of the path has a purpose and a piece of work behind it.",
   },
   {
     q: "I’m nowhere near ready to think about dating.",
-    a: "Good — that’s the correct instinct, and it’s why the path starts with Recovery, not re-entry. Dating doesn’t appear until Stage three, and only once the ground you’d be standing on is solid. Men who feel “not ready” are usually exactly the men this was built for.",
+    a: "Good — that’s the correct instinct, and it’s why the path starts with Recovery, not re-entry. Dating doesn’t appear until Stage four, and only once the ground you’d be standing on is solid. Men who feel “not ready” are usually exactly the men this was built for.",
   },
   {
     q: "What happens on the call — will I be pressured?",
@@ -203,7 +208,7 @@ export default function BeginPage() {
         </div>
       </section>
 
-      {/* The mechanism — four stages */}
+      {/* The mechanism — five stages */}
       <section className="px-6 py-24 md:px-10 md:py-32">
         <div className="mx-auto max-w-4xl">
           <FadeIn>

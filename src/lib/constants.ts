@@ -46,6 +46,14 @@ export const PHASES = [
   },
   {
     numeral: "II",
+    title: "Reforge",
+    line: "The mind and character to meet the world.",
+    href: "/path/reforge",
+    image: "/images/reforge.png",
+    alt: "Steel at the forge — mind and character remade",
+  },
+  {
+    numeral: "III",
     title: "Reconstruction",
     line: "Body, style, and social presence — refined.",
     href: "/path/reconstruction",
@@ -53,7 +61,7 @@ export const PHASES = [
     alt: "Tailored jacket and fine materials",
   },
   {
-    numeral: "III",
+    numeral: "IV",
     title: "Re-entry",
     line: "Connection and discernment, on your terms.",
     href: "/path/re-entry",
@@ -61,7 +69,7 @@ export const PHASES = [
     alt: "Tasteful dinner setting for two",
   },
   {
-    numeral: "IV",
+    numeral: "V",
     title: "Relationship Mastery",
     line: "Devotion, care, and love done well.",
     href: "/path/relationship-mastery",

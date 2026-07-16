@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# python tooling (supabase/apply_migrations.py)
+__pycache__/
+
 # Proprietary coaching material and reference reading — never publish with the
 # website. This repo is PUBLIC: anything not listed here is one `git add .` away
 # from being on the internet under your own name.

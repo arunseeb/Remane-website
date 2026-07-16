@@ -9,8 +9,8 @@ import {
 } from "@/components/PhaseOverview";
 
 export const metadata = {
-  title: "Phase III: Re-entry — Remane",
-  description: "Connection and discernment, on your terms. The third phase of the Remane path.",
+  title: "Phase IV: Re-entry — Remane",
+  description: "Connection and discernment, on your terms. The fourth phase of the Remane path.",
 };
 
 const movements: Movement[] = [
@@ -80,10 +80,10 @@ export default function ReEntryPage() {
         </Link>
 
         <div className="mt-12">
-          <PhasePosition current={2} />
+          <PhasePosition current={3} />
         </div>
 
-        <p className="mt-14 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase III</p>
+        <p className="mt-14 text-xs tracking-[0.2em] text-gold-muted uppercase">Phase IV</p>
         <h1 className="mt-2 font-display text-5xl text-foreground md:text-6xl">Re-entry</h1>
         <div className="mt-3 h-px w-10 bg-gold" />
 
@@ -119,13 +119,13 @@ export default function ReEntryPage() {
             href="/path/reconstruction"
             className="text-xs tracking-[0.2em] text-muted uppercase transition-opacity hover:opacity-70"
           >
-            ← Phase II: Reconstruction
+            ← Phase III: Reconstruction
           </Link>
           <Link
             href="/path/relationship-mastery"
             className="text-xs tracking-[0.2em] text-burgundy uppercase transition-opacity hover:opacity-70"
           >
-            Phase IV: Relationship Mastery →
+            Phase V: Relationship Mastery →
           </Link>
           <Link
             href="/enquire"

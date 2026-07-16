@@ -3,9 +3,10 @@ import { Fragment } from "react";
 
 const phases = [
   { numeral: "I", name: "Recovery", href: "/path/recovery" },
-  { numeral: "II", name: "Reconstruction", href: "/path/reconstruction" },
-  { numeral: "III", name: "Re-entry", href: "/path/re-entry" },
-  { numeral: "IV", name: "Mastery", href: "/path/relationship-mastery" },
+  { numeral: "II", name: "Reforge", href: "/path/reforge" },
+  { numeral: "III", name: "Reconstruction", href: "/path/reconstruction" },
+  { numeral: "IV", name: "Re-entry", href: "/path/re-entry" },
+  { numeral: "V", name: "Mastery", href: "/path/relationship-mastery" },
 ];
 
 export function PhasePosition({ current }: { current: number }) {

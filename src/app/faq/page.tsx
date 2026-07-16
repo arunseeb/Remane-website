@@ -47,7 +47,7 @@ const SECTIONS = [
     items: [
       {
         q: "How does the programme work?",
-        a: "We begin with an interview and assessment.\n\nFrom there, we determine which of the four sections you actually need: Recovery, Reconstruction, Re-entry, and Relationship Mastery.\n\nThere is no point teaching you what you already know. The process is personalised around your actual situation.\n\nYou will have a Zoom session every week. In that session, we review your current situation, identify what needs to change, and set specific tasks for the week ahead.\n\nBetween sessions, you receive daily accountability through WhatsApp, with support, insight, and direction when you get stuck.",
+        a: "We begin with an interview and assessment.\n\nFrom there, we determine which of the five sections you actually need: Recovery, Reforge, Reconstruction, Re-entry, and Relationship Mastery.\n\nThere is no point teaching you what you already know. The process is personalised around your actual situation.\n\nYou will have a Zoom session every week. In that session, we review your current situation, identify what needs to change, and set specific tasks for the week ahead.\n\nBetween sessions, you receive daily accountability through WhatsApp, with support, insight, and direction when you get stuck.",
       },
       {
         q: "What does a typical week look like?",
