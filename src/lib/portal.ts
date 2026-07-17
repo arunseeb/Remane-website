@@ -59,6 +59,22 @@ export function phaseProgress(week: number, totalWeeks: number): number {
   return Math.min(100, Math.round((completed / totalWeeks) * 100));
 }
 
+/** The stage that canonically follows this one, or null if it is the last. */
+export function nextPhase(phase: PhaseKey): PhaseKey | null {
+  const i = PHASE_KEYS.indexOf(phase);
+  return i >= 0 && i < PHASE_KEYS.length - 1 ? PHASE_KEYS[i + 1] : null;
+}
+
+/**
+ * Coach-only cue: is the client within two weeks of the end of this stage
+ * (or already past its planned length)? Used to prompt the coach to line up
+ * the next stage. Deliberately never surfaced to the client.
+ */
+export function nearingStageEnd(week: number, totalWeeks: number): boolean {
+  if (totalWeeks <= 0) return false;
+  return totalWeeks - week <= 2;
+}
+
 export type HomeworkStatus = "assigned" | "submitted" | "returned" | "completed";
 
 export type Homework = {

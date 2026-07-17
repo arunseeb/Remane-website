@@ -33,7 +33,7 @@ export function PhaseManager({
       <div className="space-y-3">
         {phases.map((phase) => (
           <div key={phase.id} className="border border-brown/15 bg-background px-4 py-3">
-            <PhaseProgress phase={phase} compact />
+            <PhaseProgress phase={phase} compact coachView />
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <StageLengthInput
