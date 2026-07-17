@@ -14,6 +14,32 @@ Then open http://localhost:3000
 
 ---
 
+## Session log — 2026-07-17
+
+All items below are committed and (for the website) auto-deployed via Vercel. Two repos are involved: the **website** (`arunseeb/Remane-website`, this folder) and the **curricula** (`arunseeb/remane-coaching-curricula`, the `Modules and homework/` sub-repo).
+
+**Database migrations applied this session** (run from `supabase/apply_migrations.py`, which now includes them and re-applies all idempotently):
+- `migration-010-attachments.sql` — attachment columns on `messages` + `homework`; a private `chat` storage bucket with member-scoped RLS (`chat_path_room_member`); a `homework_upload_coach` storage policy; a `messages_has_body` check.
+- `migration-011-homework-reviews.sql` — `homework_reviews` table (feedback history) + RLS (coach writes; coach and owning client read).
+
+**Website changes** (commits newest-first):
+- `8acdcfa` **Homework feedback history** — coach feedback is saved per submission/resubmission instead of overwriting `homework.feedback`. New `homework_reviews` rows (with a snapshot of the submission), rendered by the shared `src/components/portal/FeedbackThread.tsx` in both the client's `HomeworkItem` and the coach's `HomeworkReviewCard`. All three homework-rendering pages fetch reviews and pass a per-homework `reviews` array.
+- `94f1999` **Three homework-review actions** — `HomeworkReviewCard` now offers: send feedback & ask to resubmit (→ returned), send feedback no resubmit (→ completed with feedback), and mark as complete (→ completed, no feedback). `completeHomework` now returns a `NoteState`.
+- `c2486a8` **Attachments in chat + homework** — paperclip in the `ChatRoom` composer uploads a file/image (≤25 MB) to the `chat` bucket; images render inline, other files as download links via signed URLs. The coach can also attach a file when assigning homework (`AssignHomeworkForm` was rewritten from `useActionState` to a manual submit that uploads client-side then calls `assignHomework`). Client homework submission already supported files.
+- `5e20951` **Coach next-stage cue** — `PhaseProgress` gained a `coachView` prop; within two weeks of a stage's end (and not the final stage) it shows a gold dot + "Talk to client about next stage", coach-only (the client renders the same component without the flag). Adding/removing stages already existed in `PhaseManager`.
+- `2d835f6` **Reforge image** — `public/images/reforge.png` replaced with the new journal/writing shot (also used by the Reforge deck end cards, which read the same file).
+
+**Curricula changes** (commits newest-first):
+- `b1c0b25` **Exams** — `Modules and homework/Exams/`: a practice paper and a real exam, 125 MCQs each (25 per book × 5). Every question has four options by design (correct / close-but-wrong / opposes-material-but-defensible / clearly-wrong). The real exam shares exactly 40% (50/125, 10 per stage) with the practice paper, byte-identical. Pipeline: per-book pools `_pool_stageN.json` → `assemble_exams.py` (SEED=20260717) → `render_exams.py` (brand-styled `.docx`). Regenerate without re-running the readers: `python assemble_exams.py && python render_exams.py`.
+- `50bb075` / `6a1ba6d` **Stage books as Word docs** — all five stage books rendered to brand-styled `.docx` via `Stage Books/_make_book_docx.py` (`python _make_book_docx.py` rebuilds all five). The Reforge deck end cards were also rebuilt with the new image.
+
+**Open items / offered follow-ups (not done — awaiting the go-ahead):**
+- Returning/completing homework updates status but does **not** notify the client in chat or email (booking a session does). Easy to add if wanted.
+- The exam papers are 125 questions each (long, = 25 × 5). Shortening (e.g. 15/book) is a one-number change in `assemble_exams.py`; the 40% overlap is whole-question-identical and could instead be reworded/reshuffled.
+- `HANDOFF.md`'s older sections still say "four-phase journey" — the programme is now **five** stages (Reforge was inserted as Stage II); the phase list in `src/lib/constants.ts` / `src/lib/portal.ts` is the source of truth.
+
+---
+
 ## Deployment
 - **GitHub:** https://github.com/arunseeb/Remane-website.git
 - **Host:** Vercel (connected to GitHub — auto-deploys on push to `main`)
