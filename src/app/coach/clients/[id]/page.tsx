@@ -65,12 +65,19 @@ export default async function ClientDetailPage({
   if (!client) notFound();
 
   const fileUrls = new Map<string, string>();
+  const assignmentUrls = new Map<string, string>();
   for (const hw of (homework ?? []) as Homework[]) {
     if (hw.submission_file_path) {
       const { data } = await supabase.storage
         .from("homework")
         .createSignedUrl(hw.submission_file_path, 3600);
       if (data) fileUrls.set(hw.id, data.signedUrl);
+    }
+    if (hw.attachment_path) {
+      const { data } = await supabase.storage
+        .from("homework")
+        .createSignedUrl(hw.attachment_path, 3600);
+      if (data) assignmentUrls.set(hw.id, data.signedUrl);
     }
   }
 
@@ -170,7 +177,12 @@ export default async function ClientDetailPage({
         </summary>
         <div className="space-y-4 border-t border-brown/20 p-5">
           {((homework ?? []) as Homework[]).map((hw) => (
-            <HomeworkReviewCard key={hw.id} homework={hw} fileUrl={fileUrls.get(hw.id) ?? null} />
+            <HomeworkReviewCard
+              key={hw.id}
+              homework={hw}
+              fileUrl={fileUrls.get(hw.id) ?? null}
+              assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+            />
           ))}
           {(homework ?? []).length === 0 && (
             <p className="text-sm text-muted">No homework set yet.</p>

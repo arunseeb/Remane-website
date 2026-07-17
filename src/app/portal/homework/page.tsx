@@ -16,11 +16,20 @@ export default async function PortalHomeworkPage() {
   const items = (homework ?? []) as Homework[];
 
   const fileUrls = new Map<string, string>();
-  for (const hw of items.filter((h) => h.submission_file_path)) {
-    const { data } = await supabase.storage
-      .from("homework")
-      .createSignedUrl(hw.submission_file_path!, 3600);
-    if (data) fileUrls.set(hw.id, data.signedUrl);
+  const assignmentUrls = new Map<string, string>();
+  for (const hw of items) {
+    if (hw.submission_file_path) {
+      const { data } = await supabase.storage
+        .from("homework")
+        .createSignedUrl(hw.submission_file_path, 3600);
+      if (data) fileUrls.set(hw.id, data.signedUrl);
+    }
+    if (hw.attachment_path) {
+      const { data } = await supabase.storage
+        .from("homework")
+        .createSignedUrl(hw.attachment_path, 3600);
+      if (data) assignmentUrls.set(hw.id, data.signedUrl);
+    }
   }
 
   const open = items.filter((h) => h.status === "assigned" || h.status === "returned");
@@ -39,6 +48,7 @@ export default async function PortalHomeworkPage() {
             homework={hw}
             userId={user!.id}
             fileUrl={fileUrls.get(hw.id) ?? null}
+            assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
           />
         ))}
         {open.length === 0 && <p className="text-sm text-muted">Nothing to do right now.</p>}
@@ -56,6 +66,7 @@ export default async function PortalHomeworkPage() {
                 homework={hw}
                 userId={user!.id}
                 fileUrl={fileUrls.get(hw.id) ?? null}
+            assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
               />
             ))}
           </div>
@@ -72,6 +83,7 @@ export default async function PortalHomeworkPage() {
                 homework={hw}
                 userId={user!.id}
                 fileUrl={fileUrls.get(hw.id) ?? null}
+            assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
               />
             ))}
           </div>

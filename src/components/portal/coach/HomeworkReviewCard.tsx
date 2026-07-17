@@ -15,10 +15,12 @@ export function HomeworkReviewCard({
   homework,
   clientName,
   fileUrl,
+  assignmentFileUrl,
 }: {
   homework: Homework;
   clientName?: string;
   fileUrl: string | null;
+  assignmentFileUrl?: string | null;
 }) {
   const [feedback, setFeedback] = useState(homework.feedback ?? "");
   const [returnError, setReturnError] = useState<string | null>(null);
@@ -63,6 +65,19 @@ export function HomeworkReviewCard({
 
       {homework.instructions && (
         <p className="mt-3 text-sm whitespace-pre-wrap text-muted">{homework.instructions}</p>
+      )}
+
+      {assignmentFileUrl && (
+        <a
+          href={assignmentFileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          download={homework.attachment_name ?? undefined}
+          className="link-underline mt-3 inline-flex items-center gap-2 text-xs tracking-[0.15em] text-muted uppercase"
+        >
+          <span aria-hidden>📎</span>
+          {homework.attachment_name ?? "Attached file"}
+        </a>
       )}
 
       {(homework.submission_text || fileUrl) && (

@@ -90,6 +90,9 @@ export type Homework = {
   feedback: string | null;
   returned_at: string | null;
   created_at: string;
+  /** A file the coach attaches to the assignment (e.g. a worksheet). */
+  attachment_path: string | null;
+  attachment_name: string | null;
 };
 
 /** Coach-only. Never rendered anywhere in /portal. */
@@ -215,7 +218,17 @@ export type Message = {
   sender_id: string;
   content: string;
   created_at: string;
+  attachment_path: string | null;
+  attachment_name: string | null;
+  attachment_type: string | null;
 };
+
+/** Max size for a chat attachment, in bytes (25 MB). */
+export const CHAT_ATTACHMENT_MAX_BYTES = 25 * 1024 * 1024;
+
+export function isImageType(type: string | null): boolean {
+  return !!type && type.startsWith("image/");
+}
 
 /** Extract the YouTube video id from any common YouTube URL form. */
 export function youtubeId(url: string): string | null {

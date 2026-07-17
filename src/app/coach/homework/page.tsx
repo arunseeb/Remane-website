@@ -26,11 +26,20 @@ export default async function CoachHomeworkPage() {
   );
 
   const fileUrls = new Map<string, string>();
-  for (const hw of ((homework ?? []) as Homework[]).filter((h) => h.submission_file_path)) {
-    const { data } = await supabase.storage
-      .from("homework")
-      .createSignedUrl(hw.submission_file_path!, 3600);
-    if (data) fileUrls.set(hw.id, data.signedUrl);
+  const assignmentUrls = new Map<string, string>();
+  for (const hw of (homework ?? []) as Homework[]) {
+    if (hw.submission_file_path) {
+      const { data } = await supabase.storage
+        .from("homework")
+        .createSignedUrl(hw.submission_file_path, 3600);
+      if (data) fileUrls.set(hw.id, data.signedUrl);
+    }
+    if (hw.attachment_path) {
+      const { data } = await supabase.storage
+        .from("homework")
+        .createSignedUrl(hw.attachment_path, 3600);
+      if (data) assignmentUrls.set(hw.id, data.signedUrl);
+    }
   }
 
   return (
@@ -55,6 +64,7 @@ export default async function CoachHomeworkPage() {
                   homework={hw}
                   clientName={clientNames.get(hw.client_id)}
                   fileUrl={fileUrls.get(hw.id) ?? null}
+                  assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
                 />
               ))}
             </div>

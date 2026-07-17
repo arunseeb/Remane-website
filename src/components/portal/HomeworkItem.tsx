@@ -9,10 +9,12 @@ export function HomeworkItem({
   homework,
   userId,
   fileUrl,
+  assignmentFileUrl,
 }: {
   homework: Homework;
   userId: string;
   fileUrl: string | null;
+  assignmentFileUrl?: string | null;
 }) {
   const router = useRouter();
   const [text, setText] = useState(homework.submission_text ?? "");
@@ -89,6 +91,19 @@ export function HomeworkItem({
 
       {homework.instructions && (
         <p className="mt-2 text-sm whitespace-pre-wrap text-muted">{homework.instructions}</p>
+      )}
+
+      {assignmentFileUrl && (
+        <a
+          href={assignmentFileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          download={homework.attachment_name ?? undefined}
+          className="link-underline mt-3 inline-flex items-center gap-2 text-xs tracking-[0.15em] text-burgundy uppercase"
+        >
+          <span aria-hidden>📎</span>
+          {homework.attachment_name ?? "Attached file"}
+        </a>
       )}
 
       {homework.status === "returned" && homework.feedback && (

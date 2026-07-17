@@ -3,10 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { formatDateTime, youtubeId, type Message } from "@/lib/portal";
+import {
+  CHAT_ATTACHMENT_MAX_BYTES,
+  formatDateTime,
+  isImageType,
+  youtubeId,
+  type Message,
+} from "@/lib/portal";
 
 /** Renders message text, turning URLs into links and YouTube links into embeds. */
 function MessageBody({ content }: { content: string }) {
+  if (!content.trim()) return null;
   const parts = content.split(/(https?:\/\/\S+)/g);
   const firstVideo = parts
     .map((p) => (p.startsWith("http") ? youtubeId(p) : null))
@@ -46,6 +53,53 @@ function MessageBody({ content }: { content: string }) {
   );
 }
 
+/** Renders a message's attachment once its signed URL has resolved. */
+function MessageAttachment({
+  message,
+  url,
+  onImageLoad,
+}: {
+  message: Message;
+  url: string | undefined;
+  onImageLoad: () => void;
+}) {
+  if (!message.attachment_path) return null;
+  const name = message.attachment_name ?? "Attachment";
+  const hasText = message.content.trim().length > 0;
+  const spacing = hasText ? "mt-2" : "";
+
+  if (!url) {
+    return <p className={`${spacing} text-xs opacity-70`}>Loading attachment…</p>;
+  }
+
+  if (isImageType(message.attachment_type)) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className={`block ${spacing}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt={name}
+          onLoad={onImageLoad}
+          className="max-h-72 w-auto max-w-full rounded border border-black/10 object-contain"
+        />
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      download={name}
+      className={`${spacing} inline-flex items-center gap-2 text-sm underline underline-offset-2`}
+    >
+      <span aria-hidden>📎</span>
+      {name}
+    </a>
+  );
+}
+
 export function ChatRoom({
   roomId,
   currentUserId,
@@ -63,7 +117,11 @@ export function ChatRoom({
   const [flagError, setFlagError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [sending, setSending] = useState(false);
+  const [attachmentUrls, setAttachmentUrls] = useState<Record<string, string>>({});
   const [loaded, setLoaded] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   // Whether the user is at (or near) the bottom — only then do new messages auto-scroll,
   // so someone re-reading older advice isn't yanked down mid-read.
@@ -190,24 +248,102 @@ export function ChatRoom({
     if (list && stickToBottomRef.current) list.scrollTop = list.scrollHeight;
   }, [messages]);
 
+  // Resolve short-lived signed URLs for any attachments we haven't fetched yet.
+  // The bucket is private, so each file needs its own signed link.
+  useEffect(() => {
+    const pending = messages.filter(
+      (m) => m.attachment_path && !attachmentUrls[m.id]
+    );
+    if (pending.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      const supabase = supabaseRef.current;
+      const { data } = await supabase.storage
+        .from("chat")
+        .createSignedUrls(
+          pending.map((m) => m.attachment_path as string),
+          3600
+        );
+      if (cancelled || !data) return;
+      const next: Record<string, string> = {};
+      data.forEach((entry, i) => {
+        if (entry.signedUrl) next[pending[i].id] = entry.signedUrl;
+      });
+      if (Object.keys(next).length > 0) {
+        setAttachmentUrls((prev) => ({ ...prev, ...next }));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [messages, attachmentUrls]);
+
+  function pickFile(f: File | null) {
+    setSendError(null);
+    if (f && f.size > CHAT_ATTACHMENT_MAX_BYTES) {
+      setSendError("That file is too large (max 25 MB).");
+      return;
+    }
+    setFile(f);
+  }
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const content = draft.trim();
-    if (!content) return;
-    setDraft("");
+    const chosen = file;
+    if (!content && !chosen) return;
+    if (sending) return;
+
+    setSending(true);
     setSendError(null);
     stickToBottomRef.current = true;
     const supabase = supabaseRef.current;
+
+    let attachment: {
+      attachment_path: string;
+      attachment_name: string;
+      attachment_type: string;
+    } | null = null;
+
+    if (chosen) {
+      const safeName = chosen.name.replace(/[^\w.\-]+/g, "_");
+      const path = `${roomId}/${currentUserId}/${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from("chat")
+        .upload(path, chosen, { contentType: chosen.type || undefined });
+      if (uploadError) {
+        setSendError(`Attachment upload failed: ${uploadError.message}`);
+        setSending(false);
+        return;
+      }
+      attachment = {
+        attachment_path: path,
+        attachment_name: chosen.name,
+        attachment_type: chosen.type || "application/octet-stream",
+      };
+    }
+
     const { data, error } = await supabase
       .from("messages")
-      .insert({ room_id: roomId, sender_id: currentUserId, content })
+      .insert({
+        room_id: roomId,
+        sender_id: currentUserId,
+        content,
+        ...(attachment ?? {}),
+      })
       .select()
       .single();
+
     if (error) {
-      setDraft(content);
       setSendError("That message didn't send — check your connection and try again.");
+      setSending(false);
       return;
     }
+
+    setDraft("");
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setSending(false);
     if (data) {
       setMessages((prev) => (prev.some((m) => m.id === data.id) ? prev : [...prev, data]));
     }
@@ -257,6 +393,14 @@ export function ChatRoom({
                   </p>
                 )}
                 <MessageBody content={message.content} />
+                <MessageAttachment
+                  message={message}
+                  url={attachmentUrls[message.id]}
+                  onImageLoad={() => {
+                    const list = listRef.current;
+                    if (list && stickToBottomRef.current) list.scrollTop = list.scrollHeight;
+                  }}
+                />
                 <p className={`mt-1 text-[10px] ${mine ? "text-background/60" : "text-muted/70"}`}>
                   {formatDateTime(message.created_at)}
                   {isCoach && isFlagged && <span className="ml-2 text-gold-muted">⚑ flagged</span>}
@@ -280,12 +424,41 @@ export function ChatRoom({
           );
         })}
       </div>
+      {file && (
+        <div className="flex items-center gap-2 border-t border-brown/20 bg-background px-3 pt-2 text-xs text-muted">
+          <span aria-hidden>📎</span>
+          <span className="max-w-[60%] truncate">{file.name}</span>
+          <button
+            type="button"
+            onClick={() => pickFile(null)}
+            aria-label="Remove attachment"
+            className="text-muted transition-colors hover:text-burgundy"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {sendError && (
         <p className="border-t border-burgundy/30 bg-burgundy/5 px-4 py-2 text-xs text-burgundy">
           {sendError}
         </p>
       )}
-      <form onSubmit={send} className="flex gap-2 border-t border-brown/20 bg-background p-3">
+      <form onSubmit={send} className="flex items-center gap-2 border-t border-brown/20 bg-background p-3">
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          aria-label="Attach a file or image"
+          title="Attach a file or image"
+          className="shrink-0 border border-brown/30 px-3 py-2.5 text-base text-muted transition-colors hover:border-burgundy hover:text-burgundy"
+        >
+          📎
+        </button>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -295,9 +468,10 @@ export function ChatRoom({
         />
         <button
           type="submit"
-          className="border border-burgundy/50 px-5 py-2.5 text-xs tracking-[0.2em] text-burgundy uppercase transition-all hover:border-burgundy hover:bg-burgundy/5"
+          disabled={sending || (!draft.trim() && !file)}
+          className="shrink-0 border border-burgundy/50 px-5 py-2.5 text-xs tracking-[0.2em] text-burgundy uppercase transition-all hover:border-burgundy hover:bg-burgundy/5 disabled:opacity-50"
         >
-          Send
+          {sending ? "Sending…" : "Send"}
         </button>
       </form>
     </div>

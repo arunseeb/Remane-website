@@ -453,6 +453,8 @@ export async function assignHomework(
   const title = String(formData.get("title") ?? "").trim();
   const instructions = String(formData.get("instructions") ?? "").trim();
   const dueDate = String(formData.get("due_date") ?? "");
+  const attachmentPath = String(formData.get("attachment_path") ?? "").trim();
+  const attachmentName = String(formData.get("attachment_name") ?? "").trim();
 
   if (!clientId || !title) return { ok: false, error: "Client and title are required." };
 
@@ -461,6 +463,8 @@ export async function assignHomework(
     title,
     instructions,
     due_date: dueDate || null,
+    attachment_path: attachmentPath || null,
+    attachment_name: attachmentName || null,
   });
   if (error) return { ok: false, error: error.message };
 
