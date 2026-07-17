@@ -488,17 +488,22 @@ export async function returnHomework(
   return { ok: true, error: null };
 }
 
-export async function completeHomework(homeworkId: string, feedback?: string) {
+export async function completeHomework(
+  homeworkId: string,
+  feedback?: string
+): Promise<NoteState> {
   const { supabase } = await requireCoach();
-  await supabase
+  const { error } = await supabase
     .from("homework")
     .update({
       status: "completed",
       ...(feedback ? { feedback, returned_at: new Date().toISOString() } : {}),
     })
     .eq("id", homeworkId);
+  if (error) return { ok: false, error: error.message };
   revalidatePath("/coach", "layout");
   revalidatePath("/portal", "layout");
+  return { ok: true, error: null };
 }
 
 export async function deleteHomework(homeworkId: string) {

@@ -23,7 +23,7 @@ export function HomeworkReviewCard({
   assignmentFileUrl?: string | null;
 }) {
   const [feedback, setFeedback] = useState(homework.feedback ?? "");
-  const [returnError, setReturnError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const overdue = isOverdue(homework.due_date, homework.status);
   const needsReview = homework.status === "submitted";
@@ -112,32 +112,58 @@ export function HomeworkReviewCard({
             placeholder="Feedback for the client…"
             className="w-full border border-brown/30 bg-transparent px-4 py-2.5 text-base text-foreground placeholder:text-muted/60 focus:border-burgundy focus:outline-none"
           />
+          <p className="mt-2 text-xs text-muted/80">
+            The two feedback options send what you write above; “Mark as complete” closes it off
+            without feedback.
+          </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <button
               onClick={() =>
                 startTransition(async () => {
                   const result = await returnHomework(homework.id, feedback);
-                  setReturnError(
+                  setActionError(
                     result.ok ? null : `Not sent — ${result.error ?? "please try again"}.`
                   );
                 })
               }
               disabled={pending || !feedback.trim()}
+              title="Client revises and submits again"
               className="border border-burgundy/50 px-5 py-2.5 text-xs tracking-[0.2em] text-burgundy uppercase transition-all hover:border-burgundy hover:bg-burgundy/5 disabled:opacity-50"
             >
-              Send back with feedback
+              Send feedback &amp; ask to resubmit
             </button>
             <button
               onClick={() =>
-                startTransition(() => completeHomework(homework.id, feedback.trim() || undefined))
+                startTransition(async () => {
+                  const result = await completeHomework(homework.id, feedback);
+                  setActionError(
+                    result.ok ? null : `Not sent — ${result.error ?? "please try again"}.`
+                  );
+                })
+              }
+              disabled={pending || !feedback.trim()}
+              title="Completes the homework and sends your feedback — no resubmission"
+              className="border border-burgundy/50 px-5 py-2.5 text-xs tracking-[0.2em] text-burgundy uppercase transition-all hover:border-burgundy hover:bg-burgundy/5 disabled:opacity-50"
+            >
+              Send feedback, no resubmit
+            </button>
+            <button
+              onClick={() =>
+                startTransition(async () => {
+                  const result = await completeHomework(homework.id);
+                  setActionError(
+                    result.ok ? null : `Not saved — ${result.error ?? "please try again"}.`
+                  );
+                })
               }
               disabled={pending}
+              title="Completes the homework without sending feedback"
               className="border border-brown/30 px-5 py-2.5 text-xs tracking-[0.2em] text-muted uppercase transition-colors hover:border-burgundy hover:text-burgundy"
             >
-              Mark complete
+              Mark as complete
             </button>
           </div>
-          {returnError && <p className="mt-2 text-xs text-burgundy">{returnError}</p>}
+          {actionError && <p className="mt-2 text-xs text-burgundy">{actionError}</p>}
         </div>
       )}
 
