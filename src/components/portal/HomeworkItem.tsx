@@ -3,18 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { formatDate, isOverdue, type Homework } from "@/lib/portal";
+import { formatDate, isOverdue, type Homework, type HomeworkReview } from "@/lib/portal";
+import { FeedbackThread } from "@/components/portal/FeedbackThread";
 
 export function HomeworkItem({
   homework,
   userId,
   fileUrl,
   assignmentFileUrl,
+  reviews = [],
 }: {
   homework: Homework;
   userId: string;
   fileUrl: string | null;
   assignmentFileUrl?: string | null;
+  reviews?: HomeworkReview[];
 }) {
   const router = useRouter();
   const [text, setText] = useState(homework.submission_text ?? "");
@@ -106,23 +109,35 @@ export function HomeworkItem({
         </a>
       )}
 
-      {homework.status === "returned" && homework.feedback && (
-        <div className="mt-4 border-l-2 border-burgundy bg-background p-4">
-          <p className="text-xs tracking-[0.2em] text-burgundy uppercase">Feedback from Arun</p>
-          <p className="mt-1 text-sm whitespace-pre-wrap text-foreground">{homework.feedback}</p>
-          <p className="mt-2 text-xs text-muted">
-            Revise your work below and submit it again when you&apos;re ready.
+      {/* Full feedback history — one entry per submission/resubmission. */}
+      <FeedbackThread reviews={reviews} />
+
+      {/* Legacy fallback: feedback recorded before the history existed. */}
+      {reviews.length === 0 && homework.feedback && (
+        <div
+          className={`mt-4 border-l-2 bg-background p-4 ${
+            homework.status === "completed" ? "border-gold" : "border-burgundy"
+          }`}
+        >
+          <p
+            className={`text-xs tracking-[0.2em] uppercase ${
+              homework.status === "completed" ? "text-gold-muted" : "text-burgundy"
+            }`}
+          >
+            {homework.status === "completed" ? "Completed" : "Feedback from Arun"}
           </p>
+          <p className="mt-1 text-sm whitespace-pre-wrap text-foreground">{homework.feedback}</p>
         </div>
       )}
 
-      {homework.status === "completed" && (
-        <div className="mt-4 border-l-2 border-gold bg-background p-4">
-          <p className="text-xs tracking-[0.2em] text-gold-muted uppercase">Completed</p>
-          {homework.feedback && (
-            <p className="mt-1 text-sm whitespace-pre-wrap text-foreground">{homework.feedback}</p>
-          )}
-        </div>
+      {homework.status === "returned" && (
+        <p className="mt-3 text-xs text-muted">
+          Revise your work below and submit it again when you&apos;re ready.
+        </p>
+      )}
+
+      {homework.status === "completed" && reviews.length === 0 && !homework.feedback && (
+        <p className="mt-3 text-xs tracking-[0.2em] text-gold-muted uppercase">Completed</p>
       )}
 
       {(homework.submission_text || fileUrl) && homework.status !== "assigned" && (

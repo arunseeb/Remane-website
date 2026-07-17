@@ -14,6 +14,7 @@ import {
   sortPhases,
   type ClientNote,
   type Homework,
+  type HomeworkReview,
   type ScheduledSession,
 } from "@/lib/portal";
 
@@ -29,6 +30,7 @@ export default async function ClientDetailPage({
     { data: client },
     { data: phases },
     { data: homework },
+    { data: reviewRows },
     { data: dmMembership },
     { data: dossier },
     { data: notes },
@@ -41,6 +43,11 @@ export default async function ClientDetailPage({
       .select("*")
       .eq("client_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("homework_reviews")
+      .select("*, homework!inner(client_id)")
+      .eq("homework.client_id", id)
+      .order("created_at"),
     supabase
       .from("room_members")
       .select("room_id, rooms!inner(type)")
@@ -79,6 +86,13 @@ export default async function ClientDetailPage({
         .createSignedUrl(hw.attachment_path, 3600);
       if (data) assignmentUrls.set(hw.id, data.signedUrl);
     }
+  }
+
+  const reviewsByHw = new Map<string, HomeworkReview[]>();
+  for (const review of (reviewRows ?? []) as HomeworkReview[]) {
+    const list = reviewsByHw.get(review.homework_id) ?? [];
+    list.push(review);
+    reviewsByHw.set(review.homework_id, list);
   }
 
   const dmRoomId = dmMembership?.[0]?.room_id;
@@ -182,6 +196,7 @@ export default async function ClientDetailPage({
               homework={hw}
               fileUrl={fileUrls.get(hw.id) ?? null}
               assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+              reviews={reviewsByHw.get(hw.id) ?? []}
             />
           ))}
           {(homework ?? []).length === 0 && (

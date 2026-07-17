@@ -95,6 +95,18 @@ export type Homework = {
   attachment_name: string | null;
 };
 
+/** One saved coach review of a submission/resubmission — the feedback history. */
+export type HomeworkReview = {
+  id: string;
+  homework_id: string;
+  coach_id: string | null;
+  feedback: string;
+  outcome: "returned" | "completed";
+  submission_text: string | null;
+  submission_file_path: string | null;
+  created_at: string;
+};
+
 /** Coach-only. Never rendered anywhere in /portal. */
 export type ClientDossier = {
   client_id: string;

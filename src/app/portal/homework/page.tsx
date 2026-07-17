@@ -1,6 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeworkItem } from "@/components/portal/HomeworkItem";
-import type { Homework } from "@/lib/portal";
+import type { Homework, HomeworkReview } from "@/lib/portal";
+
+function groupReviews(reviews: HomeworkReview[]): Map<string, HomeworkReview[]> {
+  const byHomework = new Map<string, HomeworkReview[]>();
+  for (const review of reviews) {
+    const list = byHomework.get(review.homework_id) ?? [];
+    list.push(review);
+    byHomework.set(review.homework_id, list);
+  }
+  return byHomework;
+}
 
 export default async function PortalHomeworkPage() {
   const supabase = await createClient();
@@ -32,6 +42,12 @@ export default async function PortalHomeworkPage() {
     }
   }
 
+  const { data: reviewRows } = await supabase
+    .from("homework_reviews")
+    .select("*")
+    .order("created_at");
+  const reviewsByHw = groupReviews((reviewRows ?? []) as HomeworkReview[]);
+
   const open = items.filter((h) => h.status === "assigned" || h.status === "returned");
   const waiting = items.filter((h) => h.status === "submitted");
   const done = items.filter((h) => h.status === "completed");
@@ -49,6 +65,7 @@ export default async function PortalHomeworkPage() {
             userId={user!.id}
             fileUrl={fileUrls.get(hw.id) ?? null}
             assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+            reviews={reviewsByHw.get(hw.id) ?? []}
           />
         ))}
         {open.length === 0 && <p className="text-sm text-muted">Nothing to do right now.</p>}
@@ -67,6 +84,7 @@ export default async function PortalHomeworkPage() {
                 userId={user!.id}
                 fileUrl={fileUrls.get(hw.id) ?? null}
             assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+            reviews={reviewsByHw.get(hw.id) ?? []}
               />
             ))}
           </div>
@@ -84,6 +102,7 @@ export default async function PortalHomeworkPage() {
                 userId={user!.id}
                 fileUrl={fileUrls.get(hw.id) ?? null}
             assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+            reviews={reviewsByHw.get(hw.id) ?? []}
               />
             ))}
           </div>

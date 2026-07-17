@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { AssignHomeworkForm } from "@/components/portal/coach/AssignHomeworkForm";
 import { HomeworkReviewCard } from "@/components/portal/coach/HomeworkReviewCard";
-import type { Homework, Profile } from "@/lib/portal";
+import type { Homework, HomeworkReview, Profile } from "@/lib/portal";
 
 const SECTION_ORDER: { status: Homework["status"]; title: string }[] = [
   { status: "submitted", title: "Needs review" },
@@ -13,10 +13,18 @@ const SECTION_ORDER: { status: Homework["status"]; title: string }[] = [
 export default async function CoachHomeworkPage() {
   const supabase = await createClient();
 
-  const [{ data: homework }, { data: clients }] = await Promise.all([
+  const [{ data: homework }, { data: clients }, { data: reviewRows }] = await Promise.all([
     supabase.from("homework").select("*").order("created_at", { ascending: false }),
     supabase.from("profiles").select("id, full_name, email").eq("role", "client").order("full_name"),
+    supabase.from("homework_reviews").select("*").order("created_at"),
   ]);
+
+  const reviewsByHw = new Map<string, HomeworkReview[]>();
+  for (const review of (reviewRows ?? []) as HomeworkReview[]) {
+    const list = reviewsByHw.get(review.homework_id) ?? [];
+    list.push(review);
+    reviewsByHw.set(review.homework_id, list);
+  }
 
   const clientNames = new Map(
     ((clients ?? []) as Pick<Profile, "id" | "full_name" | "email">[]).map((c) => [
@@ -65,6 +73,7 @@ export default async function CoachHomeworkPage() {
                   clientName={clientNames.get(hw.client_id)}
                   fileUrl={fileUrls.get(hw.id) ?? null}
                   assignmentFileUrl={assignmentUrls.get(hw.id) ?? null}
+                  reviews={reviewsByHw.get(hw.id) ?? []}
                 />
               ))}
             </div>

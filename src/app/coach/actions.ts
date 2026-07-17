@@ -473,11 +473,36 @@ export async function assignHomework(
   return { ok: true, error: null };
 }
 
+// Save one feedback entry into the history, snapshotting the submission it
+// responded to (homework.* is overwritten when the client resubmits).
+async function recordReview(
+  supabase: Awaited<ReturnType<typeof requireCoach>>["supabase"],
+  coachId: string,
+  homeworkId: string,
+  feedback: string,
+  outcome: "returned" | "completed"
+) {
+  const { data: hw } = await supabase
+    .from("homework")
+    .select("submission_text, submission_file_path")
+    .eq("id", homeworkId)
+    .single();
+  await supabase.from("homework_reviews").insert({
+    homework_id: homeworkId,
+    coach_id: coachId,
+    feedback,
+    outcome,
+    submission_text: hw?.submission_text ?? null,
+    submission_file_path: hw?.submission_file_path ?? null,
+  });
+}
+
 export async function returnHomework(
   homeworkId: string,
   feedback: string
 ): Promise<NoteState> {
-  const { supabase } = await requireCoach();
+  const { supabase, coachId } = await requireCoach();
+  await recordReview(supabase, coachId, homeworkId, feedback, "returned");
   const { error } = await supabase
     .from("homework")
     .update({ status: "returned", feedback, returned_at: new Date().toISOString() })
@@ -492,7 +517,10 @@ export async function completeHomework(
   homeworkId: string,
   feedback?: string
 ): Promise<NoteState> {
-  const { supabase } = await requireCoach();
+  const { supabase, coachId } = await requireCoach();
+  if (feedback) {
+    await recordReview(supabase, coachId, homeworkId, feedback, "completed");
+  }
   const { error } = await supabase
     .from("homework")
     .update({

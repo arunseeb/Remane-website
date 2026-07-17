@@ -20,11 +20,13 @@ MIGRATIONS = [
     "migration-008-security-hardening.sql",
     "migration-009-reforge-phase.sql",
     "migration-010-attachments.sql",
+    "migration-011-homework-reviews.sql",
 ]
 
 VERIFY_TABLES = [
     "client_notes", "client_dossier", "resources", "resource_shares",
     "room_reads", "message_flags", "room_alerts", "scheduled_sessions",
+    "homework_reviews",
 ]
 
 

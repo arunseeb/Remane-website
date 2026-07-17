@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { completeHomework, deleteHomework, returnHomework } from "@/app/coach/actions";
-import { formatDate, isOverdue, type Homework } from "@/lib/portal";
+import { formatDate, isOverdue, type Homework, type HomeworkReview } from "@/lib/portal";
+import { FeedbackThread } from "@/components/portal/FeedbackThread";
 
 const STATUS_LABELS: Record<Homework["status"], string> = {
   assigned: "Awaiting submission",
@@ -16,11 +17,13 @@ export function HomeworkReviewCard({
   clientName,
   fileUrl,
   assignmentFileUrl,
+  reviews = [],
 }: {
   homework: Homework;
   clientName?: string;
   fileUrl: string | null;
   assignmentFileUrl?: string | null;
+  reviews?: HomeworkReview[];
 }) {
   const [feedback, setFeedback] = useState(homework.feedback ?? "");
   const [actionError, setActionError] = useState<string | null>(null);
@@ -103,6 +106,8 @@ export function HomeworkReviewCard({
         </div>
       )}
 
+      <FeedbackThread reviews={reviews} />
+
       {(needsReview || homework.status === "returned") && (
         <div className="mt-4">
           <textarea
@@ -167,7 +172,8 @@ export function HomeworkReviewCard({
         </div>
       )}
 
-      {homework.status === "completed" && homework.feedback && (
+      {/* Legacy fallback: feedback recorded before the history existed. */}
+      {reviews.length === 0 && homework.status === "completed" && homework.feedback && (
         <p className="mt-3 text-sm text-muted">
           <span className="text-xs tracking-[0.2em] uppercase">Feedback given:</span>{" "}
           {homework.feedback}
