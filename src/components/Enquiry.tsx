@@ -42,7 +42,10 @@ export function Enquiry() {
     const form = e.currentTarget;
     const els = form.elements;
 
-    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+    // Tolerate a full URL being pasted into the env var — take only the bare
+    // form id. A value like "https://formspree.io/f/xlgvydll" would otherwise be
+    // double-prefixed into "…/f/https://formspree.io/f/xlgvydll" and 404 every lead.
+    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID?.replace(/^.*\/f\//, "").trim();
     if (!formspreeId) {
       // Otherwise this posts to formspree.io/f/undefined and the lead is lost.
       console.error("NEXT_PUBLIC_FORMSPREE_ID is not set");

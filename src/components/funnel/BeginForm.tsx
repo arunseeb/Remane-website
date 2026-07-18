@@ -58,7 +58,9 @@ export function BeginForm() {
     const form = e.currentTarget;
     const els = form.elements;
 
-    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+    // Tolerate a full URL in the env var — take only the bare form id, so a
+    // pasted "https://formspree.io/f/xxxx" isn't double-prefixed into a 404.
+    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID?.replace(/^.*\/f\//, "").trim();
     if (!formspreeId) {
       // Otherwise this posts to formspree.io/f/undefined and the lead is lost.
       console.error("NEXT_PUBLIC_FORMSPREE_ID is not set");
