@@ -30,6 +30,8 @@ export type Profile = {
   full_name: string;
   email: string;
   created_at: string;
+  /** When the user first set a password. Null = invited but not signed up yet. */
+  activated_at: string | null;
 };
 
 export type ClientPhase = {

@@ -8,6 +8,7 @@ import { AddNoteForm } from "@/components/portal/coach/AddNoteForm";
 import { NoteCard } from "@/components/portal/coach/NoteCard";
 import { SessionAdmin } from "@/components/portal/coach/SessionAdmin";
 import { PhaseManager } from "@/components/portal/coach/PhaseManager";
+import { AccountPendingBadge } from "@/components/portal/coach/AccountPendingBadge";
 import {
   PHASE_LABELS,
   formatDate,
@@ -71,6 +72,8 @@ export default async function ClientDetailPage({
 
   if (!client) notFound();
 
+  const clientActivated = Boolean(client.activated_at);
+
   const fileUrls = new Map<string, string>();
   const assignmentUrls = new Map<string, string>();
   for (const hw of (homework ?? []) as Homework[]) {
@@ -108,9 +111,12 @@ export default async function ClientDetailPage({
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-light text-foreground">
-            {client.full_name || client.email}
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-display text-3xl font-light text-foreground">
+              {client.full_name || client.email}
+            </h1>
+            {!clientActivated && <AccountPendingBadge />}
+          </div>
           <p className="mt-1 text-sm text-muted">
             {client.email} · joined {formatDate(client.created_at)}
           </p>

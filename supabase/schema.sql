@@ -7,6 +7,7 @@
 
 -- ---------- Clean slate (so this file can be re-run) ----------
 drop trigger if exists on_auth_user_created on auth.users;
+drop trigger if exists on_auth_user_password_set on auth.users;
 drop table if exists public.messages      cascade;
 drop table if exists public.room_members  cascade;
 drop table if exists public.rooms         cascade;
@@ -19,6 +20,7 @@ drop table if exists public.client_dossier cascade;
 drop table if exists public.client_phases  cascade;
 drop table if exists public.profiles       cascade;
 drop function if exists public.handle_new_user()       cascade;
+drop function if exists public.mark_profile_activated() cascade;
 drop function if exists public.guard_homework_update() cascade;
 drop function if exists public.is_coach()              cascade;
 drop function if exists public.is_room_member(uuid)    cascade;
@@ -34,7 +36,10 @@ create table public.profiles (
   role text not null default 'client' check (role in ('coach', 'client')),
   full_name text not null default '',
   email text not null default '',
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Stamped the instant the user first sets a password (see trigger below).
+  -- Null until then: an invited client is a "potential client" in the coach portal.
+  activated_at timestamptz
 );
 
 -- ---------- Client phases (a client can be in several at once) ----------
@@ -163,6 +168,29 @@ $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- Stamp profiles.activated_at the first time a user gains a password (i.e. an
+-- invited client completes signup). Invited users start with a null
+-- encrypted_password; it becomes non-null when they set one.
+create function public.mark_profile_activated()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if new.encrypted_password is not null and new.encrypted_password <> ''
+     and (old.encrypted_password is null or old.encrypted_password = '') then
+    update public.profiles
+      set activated_at = coalesce(activated_at, now())
+      where id = new.id;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_password_set
+  after update of encrypted_password on auth.users
+  for each row execute function public.mark_profile_activated();
 
 -- Helper functions (security definer avoids RLS recursion)
 create function public.is_coach()

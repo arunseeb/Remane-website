@@ -21,6 +21,7 @@ MIGRATIONS = [
     "migration-009-reforge-phase.sql",
     "migration-010-attachments.sql",
     "migration-011-homework-reviews.sql",
+    "migration-012-activated-at.sql",
 ]
 
 VERIFY_TABLES = [
